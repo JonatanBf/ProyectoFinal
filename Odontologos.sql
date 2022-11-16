@@ -1,0 +1,12 @@
+CREATE TABLE  IF NOT EXISTS Odontologos
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(80) NOT NULL,
+    Apellido VARCHAR(80) NOT NULL,
+    Matricula VARCHAR(20) NOT NULL unique
+);
+
+
+
+
+
