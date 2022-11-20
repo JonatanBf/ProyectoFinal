@@ -1,12 +1,12 @@
 package com.example.ProyectoIntegrador.service;
 
-import com.example.ProyectoIntegrador.daos.OdontologoDAOH2;
 import com.example.ProyectoIntegrador.daos.PacienteDAOH2;
-import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.entidades.Paciente;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 @AllArgsConstructor

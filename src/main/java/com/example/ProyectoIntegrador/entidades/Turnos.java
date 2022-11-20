@@ -1,6 +1,16 @@
 package com.example.ProyectoIntegrador.entidades;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.time.LocalDate;
 
-public record Turnos(int id, int id_Odontologo, int id_Paciente, LocalDate fecha) {
+@AllArgsConstructor
+@Getter
+public class Turnos {
+
+    private int id;
+    private int id_Odontologo;
+    private int id_Paciente;
+    private LocalDate fecha;
 }

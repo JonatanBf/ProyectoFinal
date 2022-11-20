@@ -22,14 +22,14 @@ public class OdontologoDAOH2 implements Dao<Odontologo> {
         try {
             var c = ConnectionH2.urlOdontologos();
             var st = c.prepareStatement(INSERT);
-            st.setString(1, odontologo.nombre());
-            st.setString(2, odontologo.apellido());
-            st.setString(3, odontologo.matricula());
+            st.setString(1, odontologo.getNombre());
+            st.setString(2, odontologo.getApellido());
+            st.setString(3, odontologo.getMatricula());
             st.execute();
+            logger.info("Se agrego correctamente: " + odontologo.getApellido() +" "+odontologo.getNombre()+" || Matricula: "+ odontologo.getMatricula());
         }catch (SQLException e) {
             logger.error("Metodo Agregar: "+ e.getMessage());
         }
-        logger.info("Se agrego correctamente: " + odontologo.apellido() +" "+odontologo.nombre()+" con Matricula: "+ odontologo.matricula());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class OdontologoDAOH2 implements Dao<Odontologo> {
                 var nombre = rset.getString(2);
                 var apellido = rset.getString(3);
                 var matricula = rset.getString(4);
-                logger.info("Id: "+id+" Nombre: "+nombre+" Apellido: "+apellido+" Matricula: "+matricula);
+                logger.info("Id: "+id+" || Nombre: "+nombre+" || Apellido: "+apellido+" || Matricula: "+matricula);
                 odontologos.add(new Odontologo(id, nombre, apellido, matricula));
             }
         } catch (SQLException e) {
@@ -63,12 +63,12 @@ public class OdontologoDAOH2 implements Dao<Odontologo> {
         try {
             var c = ConnectionH2.urlOdontologos();
             var st = c.prepareStatement(UPDATE);
-            st.setString(1, odontologo.nombre());
-            st.setString(2, odontologo.apellido());
-            st.setString(3, odontologo.matricula());
+            st.setString(1, odontologo.getNombre());
+            st.setString(2, odontologo.getApellido());
+            st.setString(3, odontologo.getMatricula());
             st.setInt(4,id);
             st.executeUpdate();
-            logger.info("Se modifico correctamente el Odontologo con ID:"+id);
+            logger.info("Se modifico correctamente el Odontologo con ID: "+id);
         } catch (SQLException e) {
             logger.error("ID inexistente");
             logger.error("Metodo Modificar: " + e.getMessage());
@@ -82,21 +82,23 @@ public class OdontologoDAOH2 implements Dao<Odontologo> {
             var select = c.prepareStatement(SELECT);
             select.setInt(1,id);
             var deleteId = select.executeQuery();
+            if ( deleteId != null){
+                while(deleteId.next()){
 
-            while(deleteId.next()){
+                    var nombre = deleteId.getString(2);
+                    var apellido = deleteId.getString(3);
+                    var matricula = deleteId.getString(4);
+                    logger.info("Se ha borrado correctamente el ID: "+id);
+                    logger.info("Nombre: "+ nombre+ " || Apellido: "+ apellido+ " || Matricula: "+matricula);
+                }
 
-                var nombre = deleteId.getString(2);
-                var apellido = deleteId.getString(3);
-                var matricula = deleteId.getString(4);
-                logger.info("Se ha borrado correctamente el ID: "+id);
-                logger.info("Nombre: "+ nombre+ " Apellido: "+ apellido+ " Matricula: "+matricula);
+                var delete = c.prepareStatement(DELETE);
+                delete.setInt(1,id);
+
+                delete.execute();
+            }else{
+                logger.error("No existe el Odontologo con ID: "+id);
             }
-
-            var delete = c.prepareStatement(DELETE);
-            delete.setInt(1,id);
-
-            delete.execute();
-
 
         } catch (SQLException e) {
             logger.error("Metodo Eliminar: " + e.getMessage());
@@ -111,17 +113,21 @@ public class OdontologoDAOH2 implements Dao<Odontologo> {
             var buscar = c.prepareStatement(SELECT);
             buscar.setInt(1, id);
             var result = buscar.executeQuery();
-            if (result.next()) {
+            if ( result != null){
+                if (result.next()) {
                 var nombre = result.getString(2);
                 var apellido = result.getString(3);
                 var matricula = result.getString(4);
                 logger.info("Odontologo encontrado");
                 var Odont = new Odontologo(id, nombre, apellido, matricula);
-                logger.info("Id: "+id+" Nombre: "+ nombre+ " Apellido: "+ apellido+ " Matricula: "+matricula);
+                logger.info("Id: "+id+" || Nombre: "+ nombre+ " || Apellido: "+ apellido+ " || Matricula: "+matricula);
                 return Odont;
+                }else {
+                    logger.error("No existe el Odontologo con ID: "+id);
+                }
+
             }
         } catch (SQLException e) {
-            logger.error("No existe el Odontologo con ID: "+id);
             logger.error("Metodo buscar por ID: " + e.getMessage());
         }
         return null;

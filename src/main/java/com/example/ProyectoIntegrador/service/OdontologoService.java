@@ -12,9 +12,10 @@ import java.util.List;
 public class OdontologoService {
 
     private final static Logger logger = LogManager.getLogger(OdontologoService.class);
+
     private final OdontologoDAOH2 odontologoDAOH2;
 
-    public void agregar(Odontologo o) {
+    public void agregar(Odontologo o){
         odontologoDAOH2.agregar(o);
     }
 

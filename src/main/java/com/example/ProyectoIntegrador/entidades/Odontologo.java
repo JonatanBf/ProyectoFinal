@@ -1,4 +1,15 @@
 package com.example.ProyectoIntegrador.entidades;
 
-public record Odontologo(int id, String nombre, String apellido, String matricula) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+@AllArgsConstructor
+@Getter
+public class Odontologo {
+
+    private int id;
+    private String nombre;
+    private String apellido;
+    private String matricula;
 }
