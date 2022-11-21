@@ -3,6 +3,7 @@ package com.example.ProyectoIntegrador.controllers;
 import com.example.ProyectoIntegrador.daos.PacienteDAOH2;
 import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.entidades.Paciente;
+import com.example.ProyectoIntegrador.entidades.Turnos;
 import com.example.ProyectoIntegrador.service.PacienteService;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,15 +91,16 @@ public class PacienteController {
 
     @DeleteMapping("/eliminar/{id}")
     public String eliminar(@PathVariable int id){
-        String respuesta = "Id: {"+id+"} no corresponde a ningun Paciente";
-        var nombre = pacienteService.buscarPorId(id).getNombre();
-        var apellido = pacienteService.buscarPorId(id).getApellido();
-        var domicilio = pacienteService.buscarPorId(id).getDomicilio();
-        var dni = pacienteService.buscarPorId(id).getDni();
-        var fechaAlta = pacienteService.buscarPorId(id).getFechaAlta();
-        if (pacienteService.buscarPorId(id)!= null){
+        String respuesta = "";
+        if (pacienteService.buscarPorId(id) == null) respuesta += "Id: {"+id+"} no corresponde a ningun Paciente";
+        else {
+            var nombre = pacienteService.buscarPorId(id).getNombre();
+            var apellido = pacienteService.buscarPorId(id).getApellido();
+            var domicilio = pacienteService.buscarPorId(id).getDomicilio();
+            var dni = pacienteService.buscarPorId(id).getDni();
+            var fechaAlta = pacienteService.buscarPorId(id).getFechaAlta();
             pacienteService.eliminar(id);
-            respuesta = "Se elimino correctamente Paciente:"+ "\n"+
+            respuesta += "Se elimino correctamente Paciente:"+ "\n"+
                     "{" + "\n" +
                     "Nombre: "+nombre+","+"\n"+
                     "Apellido: "+apellido+","+"\n"+
@@ -112,22 +114,25 @@ public class PacienteController {
 
     @GetMapping("/buscar/{id}")
     public String buscarPorId(@PathVariable int id){
-        String respuesta = "Id: {"+id+"} no corresponde a ningun Paciente";
-        var nombre = pacienteService.buscarPorId(id).getNombre();
-        var apellido = pacienteService.buscarPorId(id).getApellido();
-        var domicilio = pacienteService.buscarPorId(id).getDomicilio();
-        var dni = pacienteService.buscarPorId(id).getDni();
-        var fechaAlta = pacienteService.buscarPorId(id).getFechaAlta();
-        if (pacienteService.buscarPorId(id) == null){
-            return respuesta;
+        String respuesta = "";
+        if (pacienteService.buscarPorId(id) == null) respuesta += "Id: {"+ id + "} no corresponde a ningun Paciente";
+        else {
+            var nombre = pacienteService.buscarPorId(id).getNombre();
+            var apellido = pacienteService.buscarPorId(id).getApellido();
+            var domicilio = pacienteService.buscarPorId(id).getDomicilio();
+            var dni = pacienteService.buscarPorId(id).getDni();
+            var fechaAlta = pacienteService.buscarPorId(id).getFechaAlta();
+            pacienteService.buscarPorId(id);
+            respuesta +=
+                    "{" + "\n" +
+                    "Nombre: "+nombre+","+"\n"+
+                    "Apellido: "+apellido+","+"\n"+
+                    "Domicilio: "+domicilio+","+"\n"+
+                    "DNI: "+dni+","+","+"\n"+
+                    "FechaAlta: "+fechaAlta+"\n"+
+                    "}";
         }
-        return respuesta = "Se elimino correctamente Paciente:"+ "\n"+
-                "{" + "\n" +
-                "Nombre: "+nombre+","+"\n"+
-                "Apellido: "+apellido+","+"\n"+
-                "Domicilio: "+domicilio+","+"\n"+
-                "DNI: "+dni+","+","+"\n"+
-                "FechaAlta: "+fechaAlta+"\n"+
-                "}";
+        return respuesta;
     }
+
 }

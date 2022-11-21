@@ -37,12 +37,12 @@ public class TurnosController {
         if (turnos.getId_Odontologo() == 0) respuesta += "\n"+"{Id_Odontologo} no puede ser nulo"+"\n";
         if (turnos.getId_Paciente() == 0) respuesta += "\n"+"{Id_Paciente} no puede ser nulo"+"\n";
         if (turnos.getFecha() == null) respuesta += "\n"+"{Fecha} no puede ser nulo"+"\n";
-        if(id_odontologo == 0 | id_paciente == 0 | fecha == null ) respuesta += "\n"+"Metedo Agregar: Fallido"+"\n";
-        if(id_odontologo == 0 & id_paciente == 0 & fecha == null) respuesta = "\n"+"No se registran datos de Turno para agregar"+"\n"+
+        if(id_odontologo == 0 | id_paciente == 0 | fecha == null | oService.buscarPorId(id_odontologo)== null | pService.buscarPorId(id_paciente)== null) respuesta += "\n"+"Metedo Agregar: Fallido"+"\n";
+        if(id_odontologo == 0 & id_paciente == 0 & fecha == null & oService.buscarPorId(id_odontologo)== null & pService.buscarPorId(id_paciente)== null) respuesta = "\n"+"No se registran datos de Turno para agregar"+"\n"+
                 "Metedo Agregar: Fallido"+"\n";
-        else if(id_paciente != 0 & id_odontologo != 0 & fecha != null){
+        else if(id_paciente != 0 & id_odontologo != 0 & fecha != null & oService.buscarPorId(id_odontologo)!= null & pService.buscarPorId(id_paciente) != null){
             turnosService.agregar(turnos);
-            respuesta += "Se agrego correctamente Turno: "+"\n"+
+            respuesta = "Se agrego correctamente Turno: "+"\n"+
                     "{" +"\n"+
                     "Id_Odontologo: "+id_odontologo+","+"\n"+
                     "Id_Paciente: "+id_paciente+","+"\n"+
@@ -73,10 +73,10 @@ public class TurnosController {
             if (id_odontologo == 0) respuesta += "No se registran datos para {Id_Odontologo}"+"\n";
             if (id_paciente == 0) respuesta += "No se registran datos para {Id_Paciente}"+"\n";
             if (fecha == null) respuesta += "No se registran datos para {FechaAlta}"+"\n";
-            if(id_odontologo == 0 | id_paciente == 0 | fecha == null ) respuesta += "\n"+"Update: Fallido"+"\n";
-            if(id_odontologo == 0 && id_paciente == 0 && fecha == null ) respuesta = "\n"+"No se registran datos a Actualizar "+"\n"+
+            if(id_odontologo == 0 | id_paciente == 0 | fecha == null | oService.buscarPorId(id_odontologo)== null | pService.buscarPorId(id_paciente)== null) respuesta += "\n"+"Update: Fallido"+"\n";
+            if(id_odontologo == 0 & id_paciente == 0 & fecha == null & oService.buscarPorId(id_odontologo)== null & pService.buscarPorId(id_paciente)== null ) respuesta = "\n"+"No se registran datos a Actualizar "+"\n"+
                     "Update Fallido para Turno ID: "+id+"\n";
-            else if(id_odontologo != 0 && id_paciente != 0 && fecha != null) {
+            else if(id_paciente != 0 & id_odontologo != 0 & fecha != null & oService.buscarPorId(id_odontologo)!= null & pService.buscarPorId(id_paciente) != null) {
                     turnosService.modificar(turnos, id);
                     respuesta += "\n"+"Se Actualizo correctamente Turno: " + "\n" +"\n" +
                             "{" + "\n" +
@@ -94,13 +94,14 @@ public class TurnosController {
 
     @DeleteMapping("/eliminar/{id}")
     public String eliminar(@PathVariable int id){
-        String respuesta = "Id: {"+id+"} no corresponde a ningun Turno";
-        var paciente = turnosService.buscarPorId(id).getId_Paciente();
-        var odontologo = turnosService.buscarPorId(id).getId_Odontologo();
-        var fecha = turnosService.buscarPorId(id).getFecha();
-        if (turnosService.buscarPorId(id)!= null){
+        String respuesta = "";
+        if (turnosService.buscarPorId(id) == null) respuesta +=  "Id: {"+id+"} no corresponde a ningun Turno";
+        else {
+            var paciente = turnosService.buscarPorId(id).getId_Paciente();
+            var odontologo = turnosService.buscarPorId(id).getId_Odontologo();
+            var fecha = turnosService.buscarPorId(id).getFecha();
             turnosService.eliminar(id);
-            respuesta = "Se elimino correctamente Turno:"+ "\n"+
+            respuesta += "Se elimino correctamente Turno:"+ "\n"+
                     "{" + "\n" +
                     "Id: " + id + "," + "\n" +
                     "Id_Odontologo: " +odontologo + "," + "\n" +
@@ -113,19 +114,23 @@ public class TurnosController {
 
     @GetMapping("/buscar/{id}")
     public String buscarPorId(@PathVariable int id){
-        String respuesta = "Id: {"+id+"} no corresponde a ningun Turno";
-        var paciente = turnosService.buscarPorId(id).getId_Paciente();
-        var odontologo = turnosService.buscarPorId(id).getId_Odontologo();
-        var fecha = turnosService.buscarPorId(id).getFecha();
-        if (turnosService.buscarPorId(id) == null){
-            return respuesta;
+        String respuesta = "";
+        if (turnosService.buscarPorId(id) == null) respuesta += "Id: {"+ id + "} no corresponde a ningun Turno";
+        else {
+            var paciente = turnosService.buscarPorId(id).getId_Paciente();
+            var odontologo = turnosService.buscarPorId(id).getId_Odontologo();
+            var fecha = turnosService.buscarPorId(id).getFecha();
+            turnosService.eliminar(id);
+            respuesta +=
+                    "{" + "\n" +
+                    "Id: " + id + "," + "\n" +
+                    "Id_Odontologo: " +odontologo + "," + "\n" +
+                    "Id_Paciente: " + paciente+ "," + "\n" +
+                    "Fecha: " +fecha + "\n" +
+                    "}";
         }
-        return respuesta = "{" + "\n" +
-                "Id: " + id + "," + "\n" +
-                "Id_Odontologo: " +odontologo + "," + "\n" +
-                "Id_Paciente: " + paciente+ "," + "\n" +
-                "Fecha: " +fecha + "\n" +
-                "}";
+        return respuesta;
     }
-
 }
+
+

@@ -5,6 +5,7 @@ import com.example.ProyectoIntegrador.daos.PacienteDAOH2;
 import com.example.ProyectoIntegrador.daos.TurnoDAOH2;
 import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.entidades.Paciente;
+import com.example.ProyectoIntegrador.entidades.Turnos;
 import com.example.ProyectoIntegrador.service.OdontologoService;
 import com.example.ProyectoIntegrador.service.PacienteService;
 import com.example.ProyectoIntegrador.service.TurnosService;
@@ -21,81 +22,84 @@ import java.util.Objects;
 @CrossOrigin
 @RequestMapping("/Odontologos")
 public class OdontologoController {
-    private final OdontologoService odontologoService= new OdontologoService(new OdontologoDAOH2());
+    private final OdontologoService odontologoService = new OdontologoService(new OdontologoDAOH2());
 
 
     @PostMapping("/agregar")
-    public String agregar(@RequestBody Odontologo odontologo){
+    public String agregar(@RequestBody Odontologo odontologo) {
         String respuesta = "";
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
         var matricula = odontologo.getMatricula();
-        if(nombre == null) respuesta += "{Nombre} no puede ser nulo"+"\n";
-        if(apellido == null) respuesta += "{Apellido} no puede ser nulo"+"\n";
-        if(matricula == null) respuesta += "{Matricula} no puede ser nulo"+"\n";
-        if(nombre == null | apellido == null | matricula == null ) respuesta += "\n"+"Metedo Agregar: Fallido"+"\n";
-        if(nombre == null && apellido == null && matricula == null ) respuesta = "\n"+"No se registran datos de Odontologo para agregar"+"\n"+
-                                                                                "Metedo Agregar: Fallido"+"\n";
-        else if(apellido != null && nombre != null && matricula != null){
+        if (nombre == null) respuesta += "{Nombre} no puede ser nulo" + "\n";
+        if (apellido == null) respuesta += "{Apellido} no puede ser nulo" + "\n";
+        if (matricula == null) respuesta += "{Matricula} no puede ser nulo" + "\n";
+        if (nombre == null | apellido == null | matricula == null) respuesta += "\n" + "Metedo Agregar: Fallido" + "\n";
+        if (nombre == null && apellido == null && matricula == null)
+            respuesta = "\n" + "No se registran datos de Odontologo para agregar" + "\n" +
+                    "Metedo Agregar: Fallido" + "\n";
+        else if (apellido != null && nombre != null && matricula != null) {
             odontologoService.agregar(odontologo);
-            respuesta += "\n"+"Se agrego correctamente Odontologo: "+"\n"+"\n" +
-                    "{" +"\n"+
-                    "Nombre: "+nombre+","+"\n"+
-                    "Apellido: "+apellido+","+"\n"+
-                    "Matricula: "+matricula+"\n"+
+            respuesta += "\n" + "Se agrego correctamente Odontologo: " + "\n" + "\n" +
+                    "{" + "\n" +
+                    "Nombre: " + nombre + "," + "\n" +
+                    "Apellido: " + apellido + "," + "\n" +
+                    "Matricula: " + matricula + "\n" +
                     "}";
         }
         return respuesta;
     }
 
     @GetMapping("/listar")
-    public List<Odontologo> listar(){
+    public List<Odontologo> listar() {
         return odontologoService.listar();
     }
 
     @PutMapping("/modificar/{id}")
-    public String modificar(@RequestBody Odontologo odontologo, @PathVariable int id){
+    public String modificar(@RequestBody Odontologo odontologo, @PathVariable int id) {
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
         var matricula = odontologo.getMatricula();
         String respuesta = "";
-        if (odontologoService.buscarPorId(id) != null ){
-            if(nombre == null) respuesta += "No se registran datos para {Nombre}" + "\n";
-            if(apellido == null) respuesta += "\n"+"No se registran datos para {Apellido}" + "\n";
-            if(matricula== null) respuesta += "\n"+"No se registran datos para {Matricula}"+"\n";
-            if(apellido == null | nombre == null | matricula == null ) respuesta += "\n"+"Update: Fallido"+"\n";
-            if(apellido == null && nombre == null && matricula == null ) respuesta = "\n"+"No se registran datos a Actualizar "+"\n"+
-                                                                                    "Update Fallido para Odontologo ID: "+id+"\n";
-            else if(apellido != null && nombre!= null && matricula != null) {
+        if (odontologoService.buscarPorId(id) != null) {
+            if (nombre == null) respuesta += "No se registran datos para {Nombre}" + "\n";
+            if (apellido == null) respuesta += "\n" + "No se registran datos para {Apellido}" + "\n";
+            if (matricula == null) respuesta += "\n" + "No se registran datos para {Matricula}" + "\n";
+            if (apellido == null | nombre == null | matricula == null) respuesta += "\n" + "Update: Fallido" + "\n";
+            if (apellido == null && nombre == null && matricula == null)
+                respuesta = "\n" + "No se registran datos a Actualizar " + "\n" +
+                        "Update Fallido para Odontologo ID: " + id + "\n";
+            else if (apellido != null && nombre != null && matricula != null) {
                 odontologoService.modificar(odontologo, id);
-                respuesta += "\n"+"Se Actualizo correctamente Odontologo: " + "\n" +
+                respuesta += "Se Actualizo correctamente Odontologo: " + "\n" +
                         "{" + "\n" +
                         "Id: " + id + "," + "\n" +
                         "Nombre: " + nombre + "," + "\n" +
-                        "Apellido: " + apellido+ "," + "\n" +
+                        "Apellido: " + apellido + "," + "\n" +
                         "Matricula: " + matricula + "\n" +
                         "}";
             }
-        }else {
-            respuesta += "No existe Odontologo con ID: "+id;
+        } else {
+            respuesta += "No existe Odontologo con ID: " + id;
         }
         return respuesta;
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable int id){
-        String respuesta = "Id: {"+id+"} no corresponde a ningun Odontologo";
-        var nombre = odontologoService.buscarPorId(id).getNombre();
-        var apellido = odontologoService.buscarPorId(id).getApellido();
-        var matricula = odontologoService.buscarPorId(id).getMatricula();
-        if (odontologoService.buscarPorId(id)!= null){
+    public String eliminar(@PathVariable int id) {
+        String respuesta = "";
+        if (odontologoService.buscarPorId(id) == null) respuesta += "Id: {"+ id + "} no corresponde a ningun Odontologo";
+        else {
+            var nombre = odontologoService.buscarPorId(id).getNombre();
+            var apellido = odontologoService.buscarPorId(id).getApellido();
+            var matricula = odontologoService.buscarPorId(id).getMatricula();
             odontologoService.eliminar(id);
-            respuesta = "Se elimino correctamente Ddontologo:"+ "\n"+
-            "{" + "\n" +
-                    "Id: " + id+ "," + "\n" +
-                    "Nombre: " + nombre+"," + "\n" +
+            respuesta += "Se elimino correctamente Ddontologo:" + "\n" +
+                    "{" + "\n" +
+                    "Id: " + id + "," + "\n" +
+                    "Nombre: " + nombre + "," + "\n" +
                     "Apellido: " + apellido + "," + "\n" +
-                    "Matricula: " + matricula+ "\n" +
+                    "Matricula: " + matricula + "\n" +
                     "}";
         }
         return respuesta;
@@ -103,18 +107,23 @@ public class OdontologoController {
 
     @GetMapping("/buscar/{id}")
     public String buscarPorId(@PathVariable int id){
-        String respuesta = "Id: {"+id+"} no corresponde a ningun Odontologo";
-        var nombre = odontologoService.buscarPorId(id).getNombre();
-        var apellido = odontologoService.buscarPorId(id).getApellido();
-        var matricula = odontologoService.buscarPorId(id).getMatricula();
-        if (odontologoService.buscarPorId(id) == null){
-            return respuesta;
+        String respuesta = "";
+        if (odontologoService.buscarPorId(id) == null) respuesta += "Id: {"+ id + "} no corresponde a ningun Odontologo";
+        else {
+            var nombre = odontologoService.buscarPorId(id).getNombre();
+            var apellido = odontologoService.buscarPorId(id).getApellido();
+            var matricula = odontologoService.buscarPorId(id).getMatricula();
+            odontologoService.eliminar(id);
+            respuesta +=
+                    "{" + "\n" +
+                    "Id: " + id + "," + "\n" +
+                    "Nombre: " + nombre + "," + "\n" +
+                    "Apellido: " + apellido + "," + "\n" +
+                    "Matricula: " + matricula + "\n" +
+                    "}";
         }
-        return respuesta = "{" + "\n" +
-                "Id: " + id+ "," + "\n" +
-                "Nombre: " + nombre+"," + "\n" +
-                "Apellido: " + apellido + "," + "\n" +
-                "Matricula: " + matricula+ "\n" +
-                "}";
+        return respuesta;
     }
-}
+    }
+
+
