@@ -20,10 +20,10 @@ public class OdontologoController {
     OdontologoService odontologoService;
 
     @PostMapping("/agregar")
-    public ResponseEntity<String> agregar(@RequestBody Odontologo odontologo) {
+    public ResponseEntity<?> agregar(@RequestBody Odontologo odontologo) {
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp = null;
 
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
@@ -43,13 +43,7 @@ public class OdontologoController {
         }
         else if (apellido != null && nombre != null && matricula != null) {
             odontologoService.agregar(odontologo);
-            respuesta = "\n" + "Se agrego correctamente Odontologo: " + "\n" + "\n" +
-                    "{" + "\n" +
-                    "Nombre: " + nombre + "," + "\n" +
-                    "Apellido: " + apellido + "," + "\n" +
-                    "Matricula: " + matricula + "\n" +
-                    "}";
-            respuestaHttp = ResponseEntity.ok(respuesta);
+            respuestaHttp = ResponseEntity.ok(odontologo);
         }
         return respuestaHttp ;
     }
@@ -60,10 +54,10 @@ public class OdontologoController {
     }
 
     @PutMapping("/modificar/{id}")
-    public ResponseEntity<String> modificar(@RequestBody Odontologo odontologo, @PathVariable Long id) {
+    public ResponseEntity<?> modificar(@RequestBody Odontologo odontologo, @PathVariable Long id) {
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp = null;
 
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
@@ -85,14 +79,7 @@ public class OdontologoController {
 
             else if (apellido != null && nombre != null && matricula != null) {
                 odontologoService.modificar(odontologo, id);
-                respuesta = "Se Actualizo correctamente Odontologo: " + "\n" +
-                        "{" + "\n" +
-                        "Id: " + id + "," + "\n" +
-                        "Nombre: " + nombre + "," + "\n" +
-                        "Apellido: " + apellido + "," + "\n" +
-                        "Matricula: " + matricula + "\n" +
-                        "}";
-                respuestaHttp = ResponseEntity.ok(respuesta);
+                respuestaHttp = ResponseEntity.ok(odontologo);
             }
         } else {
             respuesta += "No existe Odontologo con ID: " + id;
@@ -102,10 +89,10 @@ public class OdontologoController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp = null;
 
         if (odontologoService.buscarPorId(id).isEmpty()) {
             respuesta = "Id: {"+ id + "} no corresponde a ningun Odontologo";
@@ -129,10 +116,10 @@ public class OdontologoController {
     }
 
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<String> buscarPorId(@PathVariable Long id){
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp = null;
 
         if (odontologoService.buscarPorId(id).isEmpty()){
             respuesta += "Id: {"+ id + "} no corresponde a ningun Odontologo";
@@ -143,14 +130,7 @@ public class OdontologoController {
             var apellido = odontologoService.buscarPorId(id).get().getApellido();
             var matricula = odontologoService.buscarPorId(id).get().getMatricula();
             odontologoService.buscarPorId(id);
-            respuesta =
-                    "{" + "\n" +
-                            "Id: " + id + "," + "\n" +
-                            "Nombre: " + nombre + "," + "\n" +
-                            "Apellido: " + apellido + "," + "\n" +
-                            "Matricula: " + matricula + "\n" +
-                            "}";
-            respuestaHttp = ResponseEntity.ok(respuesta);
+            respuestaHttp = ResponseEntity.ok(odontologoService.buscarPorId(id));
         }
         return respuestaHttp;
     }
