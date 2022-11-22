@@ -1,39 +1,47 @@
 package com.example.ProyectoIntegrador.service;
 
-import com.example.ProyectoIntegrador.daos.PacienteDAOH2;
+import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.entidades.Paciente;
-import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.example.ProyectoIntegrador.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@AllArgsConstructor
+import java.util.Optional;
+
+@Service
 public class PacienteService {
-    private final static Logger logger = LogManager.getLogger(PacienteService.class);
-    private final PacienteDAOH2 pacienteDAOH2;
+    @Autowired
+    PacienteRepository pacienteRepository;
 
-    public void agregar(Paciente p) {
-        pacienteDAOH2.agregar(p);
+
+    public void agregar(Paciente p){
+        pacienteRepository.save(p);
     }
 
-    public List<Paciente> listar() {
-        return pacienteDAOH2.listar();
-    }
-
-
-    public void modificar(Paciente p, int id) {
-        pacienteDAOH2.modificar(p, id);
+    public Optional<List<Paciente>> listar() {
+        return Optional.of(pacienteRepository.findAll());
     }
 
 
-    public void eliminar(int id) {
-        pacienteDAOH2.eliminar(id);
+    public void modificar(Paciente p, Long id) {
+        Optional<Paciente> paciente = pacienteRepository.findById(id);
+        Paciente pacienteNew = paciente.get();
+        pacienteNew.setNombre(p.getNombre());
+        pacienteNew.setApellido(p.getApellido());
+        pacienteNew.setDomicilio(p.getDomicilio());
+        pacienteNew.setDni(p.getDni());
+        pacienteNew.setFechaAlta(p.getFechaAlta());
+        pacienteRepository.save(pacienteNew);
+    }
+
+
+    public void eliminar(Long  id) {
+        pacienteRepository.deleteById(id);
 
     }
 
-    public Paciente buscarPorId(int id) {
-        return pacienteDAOH2.buscarPorId(id);
+    public Optional<Paciente> buscarPorId(Long id) {
+        return pacienteRepository.findById(id);
     }
 }

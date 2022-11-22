@@ -1,15 +1,28 @@
 package com.example.ProyectoIntegrador.entidades;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
-@AllArgsConstructor
+import javax.persistence.*;
+
+
 @Getter
+@Setter
+
+@Entity
+@Table(name = "Odontologo")
 public class Odontologo {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name="id_Odontologo")
+    private Long id;
+
+    @Column(name="Nombre")
     private String nombre;
+
+    @Column(name="Apellido")
     private String apellido;
+
+    @Column(name="Matricula")
     private String matricula;
 }

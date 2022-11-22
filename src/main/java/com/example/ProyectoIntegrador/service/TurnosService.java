@@ -1,40 +1,46 @@
 package com.example.ProyectoIntegrador.service;
 
-import com.example.ProyectoIntegrador.daos.TurnoDAOH2;
+import com.example.ProyectoIntegrador.entidades.Paciente;
 import com.example.ProyectoIntegrador.entidades.Turnos;
-import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.example.ProyectoIntegrador.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@AllArgsConstructor
+import java.util.Optional;
+
+@Service
 public class TurnosService {
 
-    private final static Logger logger = LogManager.getLogger(TurnosService.class);
-    private final TurnoDAOH2 turnoDAOH2;
+    @Autowired
+    TurnoRepository turnoRepository;
 
-    public void agregar(Turnos t) {
-        turnoDAOH2.agregar(t);
+
+    public void agregar(Turnos t){
+        turnoRepository.save(t);
     }
 
-    public List<Turnos> listar() {
-        return turnoDAOH2.listar();
-    }
-
-
-    public void modificar(Turnos t, int id) {
-        turnoDAOH2.modificar(t, id);
+    public Optional<List<Turnos>> listar() {
+        return Optional.of(turnoRepository.findAll());
     }
 
 
-    public void eliminar(int id) {
-        turnoDAOH2.eliminar(id);
+    public void modificar(Turnos t, Long id) {
+        Optional<Turnos> turno = turnoRepository.findById(id);
+        Turnos turnoNew = turno.get();
+        turnoNew.setId_Odontologo(t.getId_Odontologo());
+        turnoNew.setId_Paciente(t.getId_Paciente());
+        turnoNew.setFecha(t.getFecha());
+        turnoRepository.save(turnoNew);
+    }
+
+
+    public void eliminar(Long  id) {
+        turnoRepository.deleteById(id);
 
     }
 
-    public Turnos buscarPorId(int id) {
-        return turnoDAOH2.buscarPorId(id);
+    public Optional<Turnos> buscarPorId(Long id) {
+        return turnoRepository.findById(id);
     }
 }
