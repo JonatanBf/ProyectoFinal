@@ -3,6 +3,7 @@ package com.example.ProyectoIntegrador.controllers;
 
 import com.example.ProyectoIntegrador.entidades.Paciente;
 import com.example.ProyectoIntegrador.service.PacienteService;
+import com.example.ProyectoIntegrador.service.TurnosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class PacienteController {
     @Autowired
     PacienteService pacienteService;
 
+    @Autowired
+    TurnosService turnosService;
+
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Paciente paciente){
 
@@ -31,12 +35,15 @@ public class PacienteController {
         var dni = paciente.getDni();
         var fechaAlta = paciente.getFechaAlta();
 
+        var getDni = pacienteService.buscarDNI(dni);
+
         if(nombre == null) respuesta += "{Nombre} no puede ser nulo"+"\n";
         if(apellido == null) respuesta += "{Apellido} no puede ser nulo"+"\n";
         if(domicilio == null) respuesta += "{Domicilio} no puede ser nulo"+"\n";
         if(dni == null) respuesta += "{DNI} no puede ser nulo"+"\n";
         if(fechaAlta == null) respuesta += "{FechaAlta} no puede ser nulo"+"\n";
-        if(nombre == null | apellido == null | domicilio == null | dni == null | fechaAlta == null){
+        if (!getDni.isEmpty() && dni != null) respuesta += "DNI: "+dni+" ya existente" + "\n";
+        if(nombre == null | apellido == null | domicilio == null | dni == null | fechaAlta == null | !getDni.isEmpty()){
             respuesta += "\n"+"Metedo Agregar: Fallido"+"\n";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
@@ -45,7 +52,7 @@ public class PacienteController {
                     "Metedo Agregar: Fallido"+"\n";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
-        else if(nombre != null & apellido != null & domicilio != null & dni != null & fechaAlta != null){
+        else if(nombre != null & apellido != null & domicilio != null & dni != null & fechaAlta != null && getDni.isEmpty()){
             pacienteService.agregar(paciente);
             respuestaHttp = ResponseEntity.ok(paciente);
         }
@@ -54,7 +61,7 @@ public class PacienteController {
 
 
     @GetMapping("/listar")
-    public Optional<List<Paciente>> listar(){
+    public List<Paciente> listar(){
         return pacienteService.listar();
     }
 
@@ -71,24 +78,19 @@ public class PacienteController {
         var dni = paciente.getDni();
         var fechaAlta = paciente.getFechaAlta();
 
+        var getDni = pacienteService.buscarDNI(dni);
+
         if (pacienteService.buscarPorId(id).isPresent()){
-            if(nombre == null) respuesta += "No se registran datos para {Nombre}" + "\n";
-            if(apellido == null) respuesta += "\n"+"No se registran datos para {Apellido}" + "\n";
-            if(domicilio== null) respuesta += "\n"+"No se registran datos para {Domicilio}"+"\n";
-            if(dni== null) respuesta += "\n"+"No se registran datos para {DNI}"+"\n";
-            if(fechaAlta== null) respuesta += "\n"+"No se registran datos para {FechaAlta}"+"\n";
-            if(apellido == null | nombre == null | domicilio== null | dni == null | fechaAlta == null) {
-                respuesta += "\n"+"Update: Fallido"+"\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            }
+            if (!getDni.isEmpty() && dni != null) respuesta += "DNI: "+dni+" ya existente" + "\n"+
+                    "Update Fallido para Paciente ID: "+id+"\n";
+            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
             if(apellido == null & nombre == null & domicilio== null & dni == null & fechaAlta == null ) {
-                respuesta = "\n"+"No se registran datos a Actualizar "+"\n"+
+                respuesta += "No se registran datos a Actualizar "+"\n"+
                         "Update Fallido para Paciente ID: "+id+"\n";
                 respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            }
-            else if(apellido != null & nombre != null & domicilio != null & dni != null & fechaAlta != null) {
+            }else if(getDni.isEmpty()){
                 pacienteService.modificar(paciente, id);
-                respuestaHttp = ResponseEntity.ok(paciente);
+                respuestaHttp = ResponseEntity.ok(pacienteService.buscarPorId(id));
             }
         }else {
             respuesta += "No existe Paciente con ID: "+id;
@@ -105,7 +107,11 @@ public class PacienteController {
 
         if (pacienteService.buscarPorId(id).isEmpty()) {
             respuesta += "Id: {"+id+"} no corresponde a ningun Paciente";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        } if (!turnosService.buscarPaciente(id).isEmpty()){
+            respuesta +=  "No es posible eliminar Paciente Id: {" + id + "} "+ "\n" +
+                    "Ya que registra un Turno asignado";
+            return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
             var nombre = pacienteService.buscarPorId(id).get().getNombre();
@@ -122,9 +128,8 @@ public class PacienteController {
                     "DNI: "+dni+","+","+"\n"+
                     "FechaAlta: "+fechaAlta+"\n"+
                     "}";
-            respuestaHttp = ResponseEntity.ok(respuesta);
+            return respuestaHttp = ResponseEntity.ok(respuesta);
         }
-        return respuestaHttp;
     }
 
     @GetMapping("/buscar/{id}")
@@ -144,4 +149,20 @@ public class PacienteController {
         return respuestaHttp;
     }
 
+    @GetMapping("/buscarDni/{dni}")
+    public ResponseEntity<?> buscarDni(@PathVariable String dni){
+
+        String respuesta = "";
+        ResponseEntity<?> respuestaHttp = null;
+
+        if (pacienteService.buscarDNI(dni).isEmpty()){
+            respuesta += "No se existe ningun registro con {D.N.I} : "+ dni ;
+            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        }
+        else {
+            pacienteService.buscarDNI(dni);
+            respuestaHttp = ResponseEntity.ok(pacienteService.buscarDNI(dni));
+        }
+        return respuestaHttp;
+    }
 }

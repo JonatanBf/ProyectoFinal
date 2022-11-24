@@ -1,6 +1,5 @@
 package com.example.ProyectoIntegrador.service;
 
-import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.entidades.Paciente;
 import com.example.ProyectoIntegrador.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,29 +18,29 @@ public class PacienteService {
         pacienteRepository.save(p);
     }
 
-    public Optional<List<Paciente>> listar() {
-        return Optional.of(pacienteRepository.findAll());
+    public List<Paciente> listar() {
+        return pacienteRepository.findAll();
     }
 
 
     public void modificar(Paciente p, Long id) {
         Optional<Paciente> paciente = pacienteRepository.findById(id);
         Paciente pacienteNew = paciente.get();
-        pacienteNew.setNombre(p.getNombre());
-        pacienteNew.setApellido(p.getApellido());
-        pacienteNew.setDomicilio(p.getDomicilio());
-        pacienteNew.setDni(p.getDni());
-        pacienteNew.setFechaAlta(p.getFechaAlta());
+        if(p.getNombre() != null) pacienteNew.setNombre(p.getNombre());
+        if(p.getApellido() != null) pacienteNew.setApellido(p.getApellido());
+        if(p.getDomicilio() != null) pacienteNew.setDomicilio(p.getDomicilio());
+        if(p.getDni() != null) pacienteNew.setDni(p.getDni());
+        if(p.getFechaAlta() != null) pacienteNew.setFechaAlta(p.getFechaAlta());
         pacienteRepository.save(pacienteNew);
     }
 
-
     public void eliminar(Long  id) {
         pacienteRepository.deleteById(id);
-
     }
-
     public Optional<Paciente> buscarPorId(Long id) {
         return pacienteRepository.findById(id);
+    }
+    public List<Paciente> buscarDNI(String dni) {
+        return pacienteRepository.findByDni(dni);
     }
 }

@@ -25,4 +25,5 @@ public class Odontologo {
 
     @Column(name="Matricula")
     private String matricula;
+
 }

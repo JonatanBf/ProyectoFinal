@@ -1,6 +1,5 @@
 package com.example.ProyectoIntegrador.service;
 
-import com.example.ProyectoIntegrador.entidades.Paciente;
 import com.example.ProyectoIntegrador.entidades.Turnos;
 import com.example.ProyectoIntegrador.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +19,9 @@ public class TurnosService {
         turnoRepository.save(t);
     }
 
-    public Optional<List<Turnos>> listar() {
-        return Optional.of(turnoRepository.findAll());
+    public List<Turnos> listar() {
+        return turnoRepository.findAll();
     }
-
-
     public void modificar(Turnos t, Long id) {
         Optional<Turnos> turno = turnoRepository.findById(id);
         Turnos turnoNew = turno.get();
@@ -33,14 +30,22 @@ public class TurnosService {
         turnoNew.setFecha(t.getFecha());
         turnoRepository.save(turnoNew);
     }
-
-
     public void eliminar(Long  id) {
         turnoRepository.deleteById(id);
-
     }
-
     public Optional<Turnos> buscarPorId(Long id) {
         return turnoRepository.findById(id);
+    }
+    public List<Turnos> buscarOdontologo(Long id){
+        return turnoRepository.findByOdontologo(id);
+    }
+    public List<Turnos> buscarPaciente(Long id){
+        return turnoRepository.findByPaciente(id);
+    }
+    public void deleteOdontologo(Long id){
+        turnoRepository.deleteByOdontologo(id);
+    }
+    public void deletePaciente(Long id){
+        turnoRepository.deleteByPaciente(id);
     }
 }

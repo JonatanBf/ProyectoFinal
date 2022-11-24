@@ -19,27 +19,28 @@ public class OdontologoService {
         odontologoRepository.save(o);
     }
 
-    public Optional<List<Odontologo>> listar() {
-        return Optional.of(odontologoRepository.findAll());
+    public List<Odontologo> listar() {
+        return (odontologoRepository.findAll());
     }
-
 
     public void modificar(Odontologo o, Long id) {
         Optional<Odontologo> odontologo = odontologoRepository.findById(id);
         var odontologoNew = odontologo.get();
-        odontologoNew.setNombre(o.getNombre());
-        odontologoNew.setApellido(o.getApellido());
-        odontologoNew.setMatricula(o.getMatricula());
+        if(o.getNombre() != null) odontologoNew.setNombre(o.getNombre());
+        if(o.getApellido() != null)odontologoNew.setApellido(o.getApellido());
+        if(o.getMatricula() != null)odontologoNew.setMatricula(o.getMatricula());
         odontologoRepository.save(odontologoNew);
     }
 
-
     public void eliminar(Long  id) {
        odontologoRepository.deleteById(id);
-
     }
 
     public Optional<Odontologo> buscarPorId(Long id) {
         return odontologoRepository.findById(id);
+    }
+
+    public List<Odontologo> buscarMatricula(String matricula) {
+        return odontologoRepository.findByMatricula(matricula);
     }
 }
