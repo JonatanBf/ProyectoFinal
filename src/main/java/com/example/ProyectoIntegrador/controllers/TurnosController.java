@@ -109,8 +109,8 @@ public class TurnosController {
             respuesta = "\n"+"Se elimino correctamente Turno:"+ "\n"+
                     "{" + "\n" +
                     "Id: " + id + "," + "\n" +
-                    "Odontologo: " +odontologo + "," + "\n" +
-                    "Paciente: " + paciente+ "," + "\n" +
+                    "Odontologo_Id : " +odontologo.getId() + "," + "\n" +
+                    "Paciente_Id : " + paciente.getId()+ "," + "\n" +
                     "Fecha: " +fecha + "\n" +
                     "}";
             respuestaHttp = ResponseEntity.ok(respuesta);

@@ -1,6 +1,5 @@
 package com.example.ProyectoIntegrador.controllers;
 
-
 import com.example.ProyectoIntegrador.entidades.Paciente;
 import com.example.ProyectoIntegrador.service.PacienteService;
 import com.example.ProyectoIntegrador.service.TurnoService;
