@@ -2,26 +2,21 @@ package com.example.ProyectoIntegrador.controllers;
 
 import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.service.OdontologoService;
-import com.example.ProyectoIntegrador.service.TurnosService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.ProyectoIntegrador.service.TurnoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-
+@AllArgsConstructor
 @RestController
-@CrossOrigin
-@RequestMapping("/Odontologos")
+@RequestMapping("/odontologos")
 public class OdontologoController {
 
-    @Autowired
     OdontologoService odontologoService;
-
-    @Autowired
-    TurnosService turnosService;
+    TurnoService turnoService;
 
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Odontologo odontologo) {
@@ -35,20 +30,19 @@ public class OdontologoController {
 
         var getMatricula = odontologoService.buscarMatricula(matricula);
 
-        if (nombre == null) respuesta += "{Nombre} no puede ser nulo" + "\n";
-        if (apellido == null) respuesta += "{Apellido} no puede ser nulo" + "\n";
-        if (matricula == null) respuesta += "{Matricula} no puede ser nulo" + "\n";
-        if (!getMatricula.isEmpty() && matricula != null) respuesta += "Matricula: "+matricula+" ya existente" + "\n";
-        if (nombre == null | apellido == null | matricula == null | !getMatricula.isEmpty()) {
-            respuesta += "\n" + "Metedo Agregar: Fallido" + "\n";
+        if (nombre == null) respuesta += "\n"+"Nombre: no puede ser nulo" + "\n";
+        if (apellido == null) respuesta += "\n"+"Apellido: no puede ser nulo" + "\n";
+        if (matricula == null) respuesta += "\n"+"Matricula: no puede ser nulo" + "\n";
+        if (getMatricula != null & matricula!= null ) respuesta += "\n"+"Matricula: "+matricula+" ya existente" + "\n";
+        if (nombre == null | apellido == null | matricula == null | getMatricula != null) {
+            respuesta += "\n" +  "Metedo Agregar: Fallido " + "\n";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
-        if (nombre == null && apellido == null && matricula == null ){
+        if (nombre == null & apellido == null & matricula == null ){
             respuesta = "\n" + "No se registran datos de Odontologo para agregar" + "\n" +
-                    "Metedo Agregar: Fallido" + "\n";
+                    "Metedo Agregar: Fallido " + "\n";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        }
-        else if (apellido != null && nombre != null && matricula != null && getMatricula.isEmpty()) {
+        }else if (getMatricula == null  & nombre != null & apellido != null & matricula!= null){
             odontologoService.agregar(odontologo);
             respuestaHttp = ResponseEntity.ok(odontologo);
         }
@@ -64,7 +58,7 @@ public class OdontologoController {
     public ResponseEntity<?> modificar(@RequestBody Odontologo odontologo, @PathVariable Long id) {
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp= null;
 
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
@@ -73,19 +67,21 @@ public class OdontologoController {
         var getMatricula = odontologoService.buscarMatricula(matricula);
 
         if (odontologoService.buscarPorId(id).isPresent()) {
-            if (!getMatricula.isEmpty() && matricula != null) respuesta += "Matricula: "+matricula+" ya existente" + "\n"+
-                    "Update Fallido para Odontologo ID: " + id + "\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            if (apellido == null && nombre == null && matricula == null){
-                respuesta += "No se registran datos a Actualizar " + "\n" +
+            if (getMatricula != null) {
+                respuesta ="\n"+ "Matricula: {"+matricula+"} ya existe en nuestros registros" + "\n"+ "\n"+
                         "Update Fallido para Odontologo ID: " + id + "\n";
                 respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            }else if(getMatricula.isEmpty()){
+            }
+            if (apellido == null & nombre == null & matricula == null){
+                respuesta ="\n" + "No se registran datos a Actualizar " + "\n" +"\n" +
+                        "Update Fallido para Odontologo ID: " + id + "\n";
+                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            }else if (getMatricula == null){
                 odontologoService.modificar(odontologo, id);
                 respuestaHttp = ResponseEntity.ok(odontologoService.buscarPorId(id));
             }
         } else {
-            respuesta += "No existe Odontologo con ID: " + id;
+            respuesta = "\n"+"No existe Odontologo con ID: " + id;
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         return respuestaHttp;
@@ -98,10 +94,10 @@ public class OdontologoController {
         ResponseEntity<?> respuestaHttp = null;
 
         if (odontologoService.buscarPorId(id).isEmpty()) {
-            respuesta += "Id: {" + id + "} no corresponde a ningun Odontologo";
+            respuesta = "\n"+"Id: {" + id + "} no corresponde a ningun Odontologo";
             return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        } if (!turnosService.buscarOdontologo(id).isEmpty()){
-            respuesta +=  "No es posible eliminar Odontologo Id: {" + id + "} "+ "\n" +
+        } if (!turnoService.buscarOdontologo(id).isEmpty() ){
+            respuesta += "\n"+ "No es posible eliminar Odontologo Id: {" + id + "} "+ "\n" +"\n"+
                     "Ya que registra un Turno asignado";
              return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         } else {
@@ -109,7 +105,7 @@ public class OdontologoController {
             var apellido = odontologoService.buscarPorId(id).get().getApellido();
             var matricula = odontologoService.buscarPorId(id).get().getMatricula();
             odontologoService.eliminar(id);
-            respuesta += "Se elimino correctamente Ddontologo:" + "\n" +
+            respuesta = "\n"+"Se elimino correctamente Ddontologo:" + "\n" +
                     "{" + "\n" +
                     "Id: " + id + "," + "\n" +
                     "Nombre: " + nombre + "," + "\n" +
@@ -126,14 +122,11 @@ public class OdontologoController {
         String respuesta = "";
         ResponseEntity<?> respuestaHttp = null;
 
-        if (odontologoService.buscarPorId(id).isEmpty()){
-            respuesta += "Id: {"+ id + "} no corresponde a ningun Odontologo";
+        if (odontologoService.buscarPorId(id).isEmpty()) {
+            respuesta = "\n"+"Id: {"+ id + "} no corresponde a ningun Odontologo";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            var nombre = odontologoService.buscarPorId(id).get().getNombre();
-            var apellido = odontologoService.buscarPorId(id).get().getApellido();
-            var matricula = odontologoService.buscarPorId(id).get().getMatricula();
             odontologoService.buscarPorId(id);
             respuestaHttp = ResponseEntity.ok(odontologoService.buscarPorId(id));
         }
@@ -146,8 +139,8 @@ public class OdontologoController {
         String respuesta = "";
         ResponseEntity<?> respuestaHttp = null;
 
-        if (odontologoService.buscarMatricula(matricula).isEmpty()){
-            respuesta += "No se existe ningun registro con {Matricula} : "+ matricula ;
+        if (odontologoService.buscarMatricula(matricula) == null){
+            respuesta = "\n" +"No se existe ningun Odontologo con Matricula : "+ matricula ;
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {

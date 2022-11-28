@@ -24,12 +24,11 @@ public class OdontologoService {
     }
 
     public void modificar(Odontologo o, Long id) {
-        Optional<Odontologo> odontologo = odontologoRepository.findById(id);
-        var odontologoNew = odontologo.get();
-        if(o.getNombre() != null) odontologoNew.setNombre(o.getNombre());
-        if(o.getApellido() != null)odontologoNew.setApellido(o.getApellido());
-        if(o.getMatricula() != null)odontologoNew.setMatricula(o.getMatricula());
-        odontologoRepository.save(odontologoNew);
+        var odontoNew = odontologoRepository.findById(id).get();
+        if(o.getNombre() != null) odontoNew.setNombre(o.getNombre());
+        if(o.getApellido() != null)odontoNew.setApellido(o.getApellido());
+        if(o.getMatricula() != null)odontoNew.setMatricula(o.getMatricula());
+        odontologoRepository.save(odontoNew);
     }
 
     public void eliminar(Long  id) {
@@ -40,7 +39,8 @@ public class OdontologoService {
         return odontologoRepository.findById(id);
     }
 
-    public List<Odontologo> buscarMatricula(String matricula) {
+    public Odontologo buscarMatricula(String matricula) {
         return odontologoRepository.findByMatricula(matricula);
     }
+
 }

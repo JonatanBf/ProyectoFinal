@@ -22,10 +22,8 @@ public class PacienteService {
         return pacienteRepository.findAll();
     }
 
-
     public void modificar(Paciente p, Long id) {
-        Optional<Paciente> paciente = pacienteRepository.findById(id);
-        Paciente pacienteNew = paciente.get();
+        var pacienteNew = pacienteRepository.findById(id).get();
         if(p.getNombre() != null) pacienteNew.setNombre(p.getNombre());
         if(p.getApellido() != null) pacienteNew.setApellido(p.getApellido());
         if(p.getDomicilio() != null) pacienteNew.setDomicilio(p.getDomicilio());
@@ -40,7 +38,7 @@ public class PacienteService {
     public Optional<Paciente> buscarPorId(Long id) {
         return pacienteRepository.findById(id);
     }
-    public List<Paciente> buscarDNI(String dni) {
+    public Paciente buscarDNI(String dni) {
         return pacienteRepository.findByDni(dni);
     }
 }

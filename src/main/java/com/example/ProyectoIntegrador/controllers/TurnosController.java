@@ -1,115 +1,90 @@
 package com.example.ProyectoIntegrador.controllers;
 
-
-import com.example.ProyectoIntegrador.entidades.Turnos;
+import com.example.ProyectoIntegrador.entidades.TurnoDto;
+import com.example.ProyectoIntegrador.entidades.Turno;
 import com.example.ProyectoIntegrador.service.OdontologoService;
 import com.example.ProyectoIntegrador.service.PacienteService;
-import com.example.ProyectoIntegrador.service.TurnosService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.ProyectoIntegrador.service.TurnoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
-@CrossOrigin
-@RequestMapping("/Turnos")
+@RequestMapping("/turnos")
 public class TurnosController {
-
-    @Autowired
-    TurnosService turnosService;
-    @Autowired
+    TurnoService turnoService;
     PacienteService pacienteService;
-    @Autowired
     OdontologoService odontologoService;
 
     @PostMapping("/agregar")
-    public ResponseEntity<String> agregar(@RequestBody Turnos turnos){
+    public ResponseEntity<?> agregar(@RequestBody TurnoDto turnoDto){
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp = null;
 
-        var id_odontologo = turnos.getId_Odontologo();
-        var id_paciente = turnos.getId_Paciente();
-        var fecha = turnos.getFecha();
+        var id_odontologo = turnoDto.getId_odontologo();
+        var id_paciente = turnoDto.getId_paciente();
+        var fecha = turnoDto.getFecha();
 
-        var oService = new OdontologoService().buscarPorId(id_odontologo);
-        var pService = new PacienteService().buscarPorId(id_paciente);
+        var odontologo = odontologoService.buscarPorId(id_odontologo);
+        var paciente = pacienteService.buscarPorId(id_paciente);
 
-        if (oService.isEmpty() && id_odontologo != 0) respuesta += "Id {"+id_odontologo+"} no corresponde a ningun Odontologo"+"\n";
-        if (pService.isEmpty() && id_paciente != 0) respuesta += "\n"+"Id {"+id_paciente+"} no corresponde a ningun Paciente"+"\n";
-        if (id_odontologo == 0) respuesta += "\n"+"{Id_Odontologo} no puede ser nulo"+"\n";
-        if (id_paciente == 0) respuesta += "\n"+"{Id_Paciente} no puede ser nulo"+"\n";
-        if (fecha == null) respuesta += "\n"+"{Fecha} no puede ser nulo"+"\n";
-        if(id_odontologo == 0 | id_paciente == 0 | fecha == null | oService.isEmpty() | pService.isEmpty()) {
+        if (odontologo.isEmpty()) respuesta += "\n"+"Id {"+id_odontologo+"} no corresponde a ningun Odontologo"+"\n";
+        if (paciente.isEmpty()) respuesta += "\n"+"Id {"+id_paciente+"} no corresponde a ningun Paciente"+"\n";
+        if (fecha == null) respuesta += "\n"+"Fecha: no puede ser nulo"+"\n";
+        if (fecha == null | id_paciente == 0 | id_odontologo == 0 | odontologo.isEmpty() | paciente.isEmpty() ) {
             respuesta += "\n"+"Metedo Agregar: Fallido"+"\n";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
-        if(id_odontologo == 0 & id_paciente == 0 & fecha == null & oService.isEmpty() & pService.isEmpty()) {
-            respuesta = "\n"+"No se registran datos de Turno para agregar"+"\n"+
-                    "Metedo Agregar: Fallido"+"\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        else {
+            var turno= turnoService.agregarDTO(turnoDto);
+            respuestaHttp = ResponseEntity.ok(turno);
         }
-        else if(id_paciente != 0 & id_odontologo != 0 & fecha != null & !oService.isEmpty() & !pService.isEmpty()){
-            turnosService.agregar(turnos);
-            respuesta = "Se agrego correctamente Turno: "+"\n"+
-                    "{" +"\n"+
-                    "Id_Odontologo: "+id_odontologo+","+"\n"+
-                    "Id_Paciente: "+id_paciente+","+"\n"+
-                    "Fecha: "+fecha+"\n"+
-                    "}";
-            respuestaHttp = ResponseEntity.ok(respuesta);
-        }
+
         return respuestaHttp;
     }
 
     @GetMapping("/listar")
-    public List<Turnos> listar(){
-        return turnosService.listar();
+    public List<Turno> listar(){
+        return turnoService.listar();
     }
 
     @PutMapping("/modificar/{id}")
-    public ResponseEntity<String> modificar(@RequestBody Turnos turnos, @PathVariable Long id){
+    public ResponseEntity<?> modificar(@RequestBody TurnoDto turnoDto, @PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
-        var id_odontologo = turnos.getId_Odontologo();
-        var id_paciente = turnos.getId_Paciente();
-        var fecha = turnos.getFecha();
-        if (turnosService.buscarPorId(id).isPresent()){
+        var id_odontologo = turnoDto.getId_odontologo();
+        var id_paciente = turnoDto.getId_paciente();
+        var fecha = turnoDto.getFecha();
 
-            var oService = new OdontologoService().buscarPorId(id_odontologo);
-            var pService = new PacienteService().buscarPorId(id_paciente);
+        if (turnoService.buscarPorId(id).isPresent()){
 
-            if (oService == null && id_odontologo != 0) respuesta += "Id {"+id_odontologo+"} no corresponde a ningun Odontologo"+"\n";
-            if (pService.isEmpty() && id_paciente != 0) respuesta += "Id {"+id_paciente+"} no corresponde a ningun Paciente"+"\n";
-            if (id_odontologo == 0) respuesta += "No se registran datos para {Id_Odontologo}"+"\n";
-            if (id_paciente == 0) respuesta += "No se registran datos para {Id_Paciente}"+"\n";
-            if (fecha == null) respuesta += "No se registran datos para {FechaAlta}"+"\n";
-            if(id_odontologo == 0 | id_paciente == 0 | fecha == null | oService.isEmpty() | pService.isEmpty()) {
+            var oService = odontologoService.buscarPorId(id_odontologo);
+            var pService = pacienteService.buscarPorId(id_paciente);
+
+            if (id_odontologo == null & id_paciente == null & fecha == null )  {
+                respuesta = "\n"+"No se registran datos a Actualizar " + "\n" +
+                        "Update Fallido para Turno ID: " + id + "\n";
+                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            }
+
+            if(oService.isEmpty() | pService.isEmpty()) {
                 respuesta += "\n"+"Update: Fallido"+"\n";
                 respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+
             }
-            if(id_odontologo == 0 & id_paciente == 0 & fecha == null & oService.isEmpty() & pService.isEmpty()) {
-                respuesta = "\n"+"No se registran datos a Actualizar "+"\n"+
-                        "Update Fallido para Turno ID: "+id+"\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            }
-            else if(id_paciente != 0 & id_odontologo != 0 & fecha != null & !oService.isEmpty() & !pService.isEmpty()) {
-                turnosService.modificar(turnos, id);
-                respuesta = "\n"+"Se Actualizo correctamente Turno: " + "\n" +"\n" +
-                        "{" + "\n" +
-                        "Id: " + id + "," + "\n" +
-                        "Id_Odontologo: " + id_odontologo + "," + "\n" +
-                        "Id_Paciente: " + id_paciente+ "," + "\n" +
-                        "Fecha: " +fecha + "\n" +
-                        "}";
-                respuestaHttp = ResponseEntity.ok(respuesta);
+            else {
+                turnoService.modificar(turnoDto, id);
+                respuestaHttp = ResponseEntity.ok(turnoService.buscarPorId(id));
             }
         }else {
-            respuesta += "No existe Turno con ID: "+id;
+            respuesta = "\n"+"No existe Turno con ID: "+id;
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         return respuestaHttp;
@@ -120,18 +95,18 @@ public class TurnosController {
     public ResponseEntity<String> eliminar(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<String> respuestaHttp;
 
-        if (turnosService.buscarPorId(id).isEmpty()) {
-            respuesta +=  "Id: {"+id+"} no corresponde a ningun Turno";
+        if (turnoService.buscarPorId(id).isEmpty()) {
+            respuesta +=  "\n"+"Id: {"+id+"} no corresponde a ningun Turno";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            var paciente = turnosService.buscarPorId(id).get().getId_Paciente();
-            var odontologo = turnosService.buscarPorId(id).get().getId_Odontologo();
-            var fecha = turnosService.buscarPorId(id).get().getFecha();
-            turnosService.eliminar(id);
-            respuesta = "Se elimino correctamente Turno:"+ "\n"+
+            var paciente = turnoService.buscarPorId(id).get().getPaciente();
+            var odontologo = turnoService.buscarPorId(id).get().getOdontologo();
+            var fecha = turnoService.buscarPorId(id).get().getFecha();
+            turnoService.eliminar(id);
+            respuesta = "\n"+"Se elimino correctamente Turno:"+ "\n"+
                     "{" + "\n" +
                     "Id: " + id + "," + "\n" +
                     "Odontologo: " +odontologo + "," + "\n" +
@@ -147,15 +122,15 @@ public class TurnosController {
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
-        if (turnosService.buscarPorId(id).isEmpty()) {
-            respuesta += "Id: {"+ id + "} no corresponde a ningun Turno";
+        if (turnoService.buscarPorId(id).isEmpty()) {
+            respuesta += "\n"+"Id: {"+ id + "} no corresponde a ningun Turno";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            turnosService.buscarPorId(id);
-            respuestaHttp = ResponseEntity.ok(turnosService.buscarPorId(id));
+            turnoService.buscarPorId(id);
+            respuestaHttp = ResponseEntity.ok(turnoService.buscarPorId(id));
         }
         return respuestaHttp;
     }
@@ -164,15 +139,15 @@ public class TurnosController {
     public ResponseEntity<?> buscarOdontologo(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
-        if (turnosService.buscarOdontologo(id).isEmpty()){
-            respuesta += "Id: {"+ id + "} Odontologo no tiene asignado ningun Turno";
+        if (turnoService.buscarOdontologo(id).isEmpty()){
+            respuesta += "\n"+"Id: {"+ id + "} Odontologo no tiene asignado ningun Turno";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            turnosService.buscarOdontologo(id);
-            respuestaHttp = ResponseEntity.ok(turnosService.buscarOdontologo(id));
+            turnoService.buscarOdontologo(id);
+            respuestaHttp = ResponseEntity.ok(turnoService.buscarOdontologo(id));
         }
         return respuestaHttp;
     }
@@ -180,15 +155,15 @@ public class TurnosController {
     @GetMapping("/buscarPaciente/{id}")
     public ResponseEntity<?> buscarPaciente(@PathVariable Long id){
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
-        if (turnosService.buscarPaciente(id).isEmpty()){
-            respuesta += "Id: {"+ id + "} Paciente no tiene asignado ningun Turno";
+        if (turnoService.buscarPaciente(id).isEmpty()){
+            respuesta += "\n"+"Id: {"+ id + "} Paciente no tiene asignado ningun Turno";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            turnosService.buscarPaciente(id);
-            respuestaHttp = ResponseEntity.ok(turnosService.buscarPaciente(id));
+            turnoService.buscarPaciente(id);
+            respuestaHttp = ResponseEntity.ok(turnoService.buscarPaciente(id));
         }
         return respuestaHttp;
     }
@@ -197,26 +172,26 @@ public class TurnosController {
     public ResponseEntity<?> eliminarOdontologo(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
-        if (turnosService.buscarOdontologo(id).isEmpty()) {
-            respuesta +=  "Id: {"+id+"} Odontologo no registra ningun Turno"+ "\n"+
+        if (turnoService.buscarOdontologo(id).isEmpty()) {
+            respuesta +=  "\n"+"Id: {"+id+"} Odontologo no registra ningun Turno"+ "\n"+
                     "Delete Fallido";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            respuesta = "Se elimino correctamente Turno:"+ "\n";
-            var turnos = turnosService.buscarOdontologo(id);
-            for (Turnos t : turnos){
+            respuesta = "Se elimino correctamente Turno:"+ "\n"+ "\n";
+            var turnos = turnoService.buscarOdontologo(id);
+            for (Turno t : turnos){
                 respuesta +=
                         "{" + "\n" +
                                 "Id: " + t.getId() + "," + "\n" +
-                                "Id_Odontologo: " +t.getId_Odontologo() + "," + "\n" +
-                                "Id_Paciente: " + t.getId_Paciente()+ "," + "\n" +
+                                "Odontologo: " +t.getOdontologo().getId()+ "," + "\n" +
+                                "Paciente: " + t.getPaciente().getId()+ "," + "\n" +
                                 "FechaAlta: " +t.getFecha() + "\n" +
-                                "}";
+                                "}"+ "\n" +"\n" ;
             }
-            turnosService.deleteOdontologo(id);
+            turnoService.deleteOdontologo(id);
             respuestaHttp = ResponseEntity.ok(respuesta);
         }
         return respuestaHttp;
@@ -226,30 +201,32 @@ public class TurnosController {
     public ResponseEntity<?> eliminarPaciente(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
-        if (turnosService.buscarPaciente(id).isEmpty()) {
-            respuesta +=  "Id: {"+id+"} Paciente no registra ningun Turno"+ "\n"+
+        if (turnoService.buscarPaciente(id).isEmpty()) {
+            respuesta +=  "\n"+"Id: {"+id+"} Paciente no registra ningun Turno"+ "\n"+
                             "Delete Fallido";
             respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
         }
         else {
-            respuesta = "Se elimino correctamente Turno:"+ "\n";
-            var turnos = turnosService.buscarPaciente(id);
-            for (Turnos t : turnos){
+            respuesta = "Se elimino correctamente Turno:"+ "\n"+ "\n";
+            var turnos = turnoService.buscarPaciente(id);
+            for (Turno t : turnos){
                 respuesta +=
                         "{" + "\n" +
                         "Id: " + t.getId() + "," + "\n" +
-                        "Id_Odontologo: " +t.getId_Odontologo() + "," + "\n" +
-                        "Id_Paciente: " + t.getId_Paciente()+ "," + "\n" +
+                        "Odontologo: " +t.getOdontologo().getId() + "," + "\n" +
+                        "Id_Paciente: " + t.getPaciente().getId()+ "," + "\n" +
                         "FechaAlta: " +t.getFecha() + "\n" +
-                        "}";
+                        "}"+ "\n" +"\n" ;
             }
-            turnosService.deletePaciente(id);
+            turnoService.deletePaciente(id);
             respuestaHttp = ResponseEntity.ok(respuesta);
         }
         return respuestaHttp;
     }
+
+
 }
 
 
