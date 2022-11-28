@@ -226,6 +226,14 @@ public class TurnosController {
         return respuestaHttp;
     }
 
+    @DeleteMapping("/eliminarRegistros")
+    public ResponseEntity<?> eliminarTodos(){
+        turnoService.borrarTodos();
+        String respuesta ="\n"+"Se eliminaron correctamente todos los registros de Turno";
+        ResponseEntity<?> respuestaHttp = ResponseEntity.ok(respuesta);;
+        return respuestaHttp;
+
+    }
 
 }
 

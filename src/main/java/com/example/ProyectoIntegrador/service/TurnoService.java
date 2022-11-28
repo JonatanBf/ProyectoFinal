@@ -63,4 +63,8 @@ public class TurnoService {
         return turnoNew;
     }
 
+    public void borrarTodos(){
+        turnoRepository.deleteAll();
+    }
+
 }

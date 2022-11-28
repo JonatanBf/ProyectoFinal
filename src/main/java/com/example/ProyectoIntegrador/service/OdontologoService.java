@@ -43,4 +43,8 @@ public class OdontologoService {
         return odontologoRepository.findByMatricula(matricula);
     }
 
+    public void borrarTodos(){
+        odontologoRepository.deleteAll();
+    }
+
 }

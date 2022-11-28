@@ -150,6 +150,14 @@ public class OdontologoController {
         return respuestaHttp;
     }
 
+    @DeleteMapping("/eliminarRegistros")
+    public ResponseEntity<?> eliminarTodos(){
+        odontologoService.borrarTodos();
+        String respuesta ="\n"+"Se eliminaron correctamente todos los registros de Odontologo";
+        ResponseEntity<?> respuestaHttp = ResponseEntity.ok(respuesta);;
+        return respuestaHttp;
+    }
+
 }
 
 

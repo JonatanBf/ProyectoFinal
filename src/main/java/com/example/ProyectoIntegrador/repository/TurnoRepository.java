@@ -26,6 +26,11 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
 
     @Modifying
     @Transactional
+    @Query("DELETE from Turno")
+    void deleteAll();
+
+    @Modifying
+    @Transactional
     @Query("DELETE Turno t where t.paciente.id= ?1")
     int deleteByPaciente(Long idPaciente);
 

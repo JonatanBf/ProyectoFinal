@@ -18,6 +18,11 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
     @Modifying
     @Transactional
+    @Query("DELETE from Paciente")
+    void deleteAll();
+
+    @Modifying
+    @Transactional
     @Query("update Paciente p set p.fechaAlta=?6, p.domicilio=?5, p.dni=?4 ,p.apellido=?3 ,p.nombre=?2 where p.id= ?1")
     void updateAll(Paciente paciente, Long idPaciente);
 }

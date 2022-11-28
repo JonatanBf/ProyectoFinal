@@ -163,4 +163,12 @@ public class PacienteController {
         }
         return respuestaHttp;
     }
+
+    @DeleteMapping("/eliminarRegistros")
+    public ResponseEntity<?> eliminarTodos(){
+        pacienteService.borrarTodos();
+        String respuesta ="\n"+"Se eliminaron correctamente todos los registros de Paciente";
+        ResponseEntity<?> respuestaHttp = ResponseEntity.ok(respuesta);;
+        return respuestaHttp;
+    }
 }

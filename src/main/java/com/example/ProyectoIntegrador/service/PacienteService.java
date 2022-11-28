@@ -41,4 +41,8 @@ public class PacienteService {
     public Paciente buscarDNI(String dni) {
         return pacienteRepository.findByDni(dni);
     }
+
+    public void borrarTodos(){
+        pacienteRepository.deleteAll();
+    }
 }
