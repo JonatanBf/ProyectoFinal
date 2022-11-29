@@ -1,8 +1,6 @@
 package com.example.ProyectoIntegrador.entidades;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +18,7 @@ import java.util.Set;
 public class Paciente  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nombre;
@@ -34,5 +32,6 @@ public class Paciente  {
 
 
     @OneToMany(mappedBy = "paciente", fetch = FetchType.EAGER)
+    @JsonBackReference(value= "PacienteRef")
     private Set<Turno> turnos = new HashSet<>();
 }

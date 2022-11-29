@@ -2,6 +2,7 @@ package com.example.ProyectoIntegrador.repository;
 
 import com.example.ProyectoIntegrador.entidades.Turno;
 import com.example.ProyectoIntegrador.entidades.TurnoDto;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,5 +39,6 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
     @Transactional
     @Query("update Turno t set t.paciente.id = ?4, t.odontologo= ?3, t.fecha = ?2 where t.id= ?1")
     TurnoDto updateAll(TurnoDto turnoDto, Long idTurno);
+
 }
 

@@ -45,4 +45,5 @@ public class PacienteService {
     public void borrarTodos(){
         pacienteRepository.deleteAll();
     }
+
 }

@@ -1,7 +1,6 @@
 package com.example.ProyectoIntegrador.entidades;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,16 +16,16 @@ import java.time.LocalDate;
 public class Turno {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "Id_Odontologo")
-    @JsonIgnore
+    @JsonManagedReference(value = "OdontologoRef")
     private Odontologo odontologo;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JsonManagedReference(value = "PacienteRef")
     @JoinColumn(name = "Id_Paciente")
-    @JsonIgnore
     private Paciente paciente;
 
     @Column(name="Fecha")

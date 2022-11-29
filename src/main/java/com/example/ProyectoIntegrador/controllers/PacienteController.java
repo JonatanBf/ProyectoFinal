@@ -97,10 +97,10 @@ public class PacienteController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id){
+    public ResponseEntity<?> eliminar(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<String> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
         if (pacienteService.buscarPorId(id).isEmpty()) {
             respuesta = "\n"+"Id: {"+id+"} no corresponde a ningun Paciente"+"\n";
@@ -133,7 +133,7 @@ public class PacienteController {
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
         if (pacienteService.buscarPorId(id).isEmpty()){
             respuesta = "\n"+"Id: {"+ id + "} no corresponde a ningun Paciente";
@@ -150,7 +150,7 @@ public class PacienteController {
     public ResponseEntity<?> buscarDni(@PathVariable String dni){
 
         String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        ResponseEntity<?> respuestaHttp;
 
         if (pacienteService.buscarDNI(dni) == null){
             respuesta += "\n"+"No se existe ningun Paciente con D.N.I : "+ dni ;
@@ -167,7 +167,8 @@ public class PacienteController {
     public ResponseEntity<?> eliminarTodos(){
         pacienteService.borrarTodos();
         String respuesta ="\n"+"Se eliminaron correctamente todos los registros de Paciente";
-        ResponseEntity<?> respuestaHttp = ResponseEntity.ok(respuesta);;
-        return respuestaHttp;
+        return ResponseEntity.ok(respuesta);
     }
+
+
 }

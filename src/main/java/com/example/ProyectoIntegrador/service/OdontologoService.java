@@ -47,4 +47,5 @@ public class OdontologoService {
         odontologoRepository.deleteAll();
     }
 
+
 }
