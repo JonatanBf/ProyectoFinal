@@ -1,15 +1,16 @@
 package com.example.ProyectoIntegrador.entidades;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Getter
 @Setter
-
 @Entity
 @Table(name = "odontologo")
 public class Odontologo  {
@@ -25,7 +26,7 @@ public class Odontologo  {
     private String matricula;
 
     @OneToMany(mappedBy = "odontologo", fetch = FetchType.EAGER)
-    @JsonBackReference(value= "OdontologoRef")
+    @JsonIgnore
     private Set<Turno> turnos = new HashSet<>();
 
 }

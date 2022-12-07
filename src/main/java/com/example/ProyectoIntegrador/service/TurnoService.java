@@ -1,7 +1,7 @@
 package com.example.ProyectoIntegrador.service;
 
 import com.example.ProyectoIntegrador.entidades.Turno;
-import com.example.ProyectoIntegrador.entidades.TurnoDto;
+import com.example.ProyectoIntegrador.dto.TurnoDto;
 import com.example.ProyectoIntegrador.repository.TurnoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,15 +13,16 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TurnoService {
 
-    TurnoRepository turnoRepository;
-    PacienteService pacienteService;
-    OdontologoService odontologoService;
+    private final TurnoRepository turnoRepository;
+    private final PacienteService pacienteService;
+    private final OdontologoService odontologoService;
 
 
     public List<Turno> listar() {
         return turnoRepository.findAll();
     }
     public void modificar(TurnoDto turnoDto, Long id) {
+
         var turnoNew = turnoRepository.findById(id).get();
         var fecha = turnoDto.getFecha();
 
@@ -30,9 +31,10 @@ public class TurnoService {
 
         odontologo.ifPresent(turnoNew::setOdontologo);
         paciente.ifPresent(turnoNew::setPaciente);
-        if (fecha != null)turnoNew.setFecha(fecha);
+        if (fecha != null )turnoNew.setFecha(fecha);
         turnoRepository.save(turnoNew);
     }
+
     public void eliminar(Long  id) {
         turnoRepository.deleteById(id);
     }

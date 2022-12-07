@@ -1,6 +1,7 @@
 package com.example.ProyectoIntegrador.controllers;
 
 import com.example.ProyectoIntegrador.entidades.Odontologo;
+import com.example.ProyectoIntegrador.exception.RequestException;
 import com.example.ProyectoIntegrador.service.OdontologoService;
 import com.example.ProyectoIntegrador.service.TurnoService;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/odontologos")
 public class OdontologoController {
 
@@ -21,32 +23,21 @@ public class OdontologoController {
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Odontologo odontologo) {
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
-
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
         var matricula = odontologo.getMatricula();
 
         var getMatricula = odontologoService.buscarMatricula(matricula);
 
-        if (nombre == null) respuesta += "\n"+"Nombre: no puede ser nulo" + "\n";
-        if (apellido == null) respuesta += "\n"+"Apellido: no puede ser nulo" + "\n";
-        if (matricula == null) respuesta += "\n"+"Matricula: no puede ser nulo" + "\n";
-        if (getMatricula != null & matricula!= null ) respuesta += "\n"+"Matricula: "+matricula+" ya existente" + "\n";
-        if (nombre == null | apellido == null | matricula == null | getMatricula != null) {
-            respuesta += "\n" +  "Metedo Agregar: Fallido " + "\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getMatricula!= null){
+            throw new RequestException("400 Bad Request","Matricula ya existente");
         }
-        if (nombre == null & apellido == null & matricula == null ){
-            respuesta = "\n" + "No se registran datos de Odontologo para agregar" + "\n" +
-                    "Metedo Agregar: Fallido " + "\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        }else if (getMatricula == null  & nombre != null & apellido != null & matricula!= null){
+        if (nombre != null & apellido != null & matricula != null & !nombre.equals("") & !apellido.equals("") & !matricula.equals("")){
             odontologoService.agregar(odontologo);
-            respuestaHttp = ResponseEntity.ok(odontologo);
-        }
-        return respuestaHttp ;
+            return new ResponseEntity<>("El Odontologo se guardo con exito", null, HttpStatus.CREATED);
+       }else{
+            throw new RequestException("400 Bad Request","Sintaxis Invalida");
+    }
     }
 
     @GetMapping("/listar")
@@ -57,78 +48,54 @@ public class OdontologoController {
     @PutMapping("/modificar/{id}")
     public ResponseEntity<?> modificar(@RequestBody Odontologo odontologo, @PathVariable Long id) {
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp= null;
-
         var nombre = odontologo.getNombre();
         var apellido = odontologo.getApellido();
         var matricula = odontologo.getMatricula();
 
+        var getId = odontologoService.buscarPorId(id);
         var getMatricula = odontologoService.buscarMatricula(matricula);
 
-        if (odontologoService.buscarPorId(id).isPresent()) {
-            if (getMatricula != null) {
-                respuesta ="\n"+ "Matricula: {"+matricula+"} ya existe en nuestros registros" + "\n"+ "\n"+
-                        "Update Fallido para Odontologo ID: " + id + "\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getId.isPresent()) {
+            if (getMatricula != null){
+                throw new RequestException("400 Bad Request","Matricula ya existente");
             }
-            if (apellido == null & nombre == null & matricula == null){
-                respuesta ="\n" + "No se registran datos a Actualizar " + "\n" +"\n" +
-                        "Update Fallido para Odontologo ID: " + id + "\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            }else if (getMatricula == null){
-                odontologoService.modificar(odontologo, id);
-                respuestaHttp = ResponseEntity.ok(odontologoService.buscarPorId(id));
+            if (nombre != null & apellido != null & matricula != null & !nombre.equals("") & !apellido.equals("") & !matricula.equals("")){
+                odontologoService.modificar(odontologo,id);
+                return new ResponseEntity<>("El Odontologo se Actualizo con exito", null, HttpStatus.CREATED);
+            }else{
+                throw new RequestException("400 Bad Request","Sintaxis Invalida");
             }
         } else {
-            respuesta = "\n"+"No existe Odontologo con ID: " + id;
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            throw new RequestException("400 Bad Request","No existe Odontologo para el Id: "+id);
         }
-        return respuestaHttp;
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
+        var getId = odontologoService.buscarPorId(id);
 
-        if (odontologoService.buscarPorId(id).isEmpty()) {
-            respuesta = "\n"+"Id: {" + id + "} no corresponde a ningun Odontologo";
-            return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getId.isEmpty()) {
+            throw new RequestException("400 Bad Request","No existe Odontologo para el Id: "+id);
         } if (!turnoService.buscarOdontologo(id).isEmpty() ){
-            respuesta += "\n"+ "No es posible eliminar Odontologo Id: {" + id + "} "+ "\n" +"\n"+
-                    "Ya que registra un Turno asignado";
-             return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            throw new RequestException("400 Bad Request",("No es posible eliminar Odontologo Id: " + id + ", ya que registra un Turno asignado"));
         } else {
-            var nombre = odontologoService.buscarPorId(id).get().getNombre();
-            var apellido = odontologoService.buscarPorId(id).get().getApellido();
-            var matricula = odontologoService.buscarPorId(id).get().getMatricula();
             odontologoService.eliminar(id);
-            respuesta = "\n"+"Se elimino correctamente Ddontologo:" + "\n" +
-                    "{" + "\n" +
-                    "Id: " + id + "," + "\n" +
-                    "Nombre: " + nombre + "," + "\n" +
-                    "Apellido: " + apellido + "," + "\n" +
-                    "Matricula: " + matricula + "\n" +
-                    "}";
-            return respuestaHttp = ResponseEntity.ok(respuesta);
+            return new ResponseEntity<>(("El Odontologo con Id: "+id+" se elimino con exito"), null, HttpStatus.CREATED);
         }
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
 
-        String respuesta = "";
         ResponseEntity<?> respuestaHttp = null;
+        var getId = odontologoService.buscarPorId(id);
 
-        if (odontologoService.buscarPorId(id).isEmpty()) {
-            respuesta = "\n"+"Id: {"+ id + "} no corresponde a ningun Odontologo";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getId.isEmpty()) {
+            throw new RequestException("400 Bad Request","Id: {"+ id + "} no corresponde a ningun Odontologo");
         }
         else {
-            odontologoService.buscarPorId(id);
-            respuestaHttp = ResponseEntity.ok(odontologoService.buscarPorId(id));
+            respuestaHttp = ResponseEntity.ok(getId);
         }
         return respuestaHttp;
     }
@@ -136,16 +103,14 @@ public class OdontologoController {
     @GetMapping("/buscarMatricula/{matricula}")
     public ResponseEntity<?> buscarMatricula(@PathVariable String matricula){
 
-        String respuesta = "";
         ResponseEntity<?> respuestaHttp = null;
+        var getMatricula = odontologoService.buscarMatricula(matricula);
 
-        if (odontologoService.buscarMatricula(matricula) == null){
-            respuesta = "\n" +"No se existe ningun Odontologo con Matricula : "+ matricula ;
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getMatricula == null){
+            throw new RequestException("400 Bad Request","No existe ningun Odontologo con Matricula : "+ matricula );
         }
         else {
-            odontologoService.buscarMatricula(matricula);
-            respuestaHttp = ResponseEntity.ok(odontologoService.buscarMatricula(matricula));
+            respuestaHttp = ResponseEntity.ok(getMatricula);
         }
         return respuestaHttp;
     }

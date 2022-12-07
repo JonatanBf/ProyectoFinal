@@ -1,7 +1,8 @@
 package com.example.ProyectoIntegrador.controllers;
 
-import com.example.ProyectoIntegrador.entidades.TurnoDto;
+import com.example.ProyectoIntegrador.dto.TurnoDto;
 import com.example.ProyectoIntegrador.entidades.Turno;
+import com.example.ProyectoIntegrador.exception.RequestException;
 import com.example.ProyectoIntegrador.service.OdontologoService;
 import com.example.ProyectoIntegrador.service.PacienteService;
 import com.example.ProyectoIntegrador.service.TurnoService;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/turnos")
 public class TurnosController {
     TurnoService turnoService;
@@ -23,9 +25,6 @@ public class TurnosController {
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody TurnoDto turnoDto){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp = null;
-
         var id_odontologo = turnoDto.getId_odontologo();
         var id_paciente = turnoDto.getId_paciente();
         var fecha = turnoDto.getFecha();
@@ -33,19 +32,18 @@ public class TurnosController {
         var odontologo = odontologoService.buscarPorId(id_odontologo);
         var paciente = pacienteService.buscarPorId(id_paciente);
 
-        if (odontologo.isEmpty()) respuesta += "\n"+"Id {"+id_odontologo+"} no corresponde a ningun Odontologo"+"\n";
-        if (paciente.isEmpty()) respuesta += "\n"+"Id {"+id_paciente+"} no corresponde a ningun Paciente"+"\n";
-        if (fecha == null) respuesta += "\n"+"Fecha: no puede ser nulo"+"\n";
-        if (fecha == null | id_paciente == 0 | id_odontologo == 0 | odontologo.isEmpty() | paciente.isEmpty() ) {
-            respuesta += "\n"+"Metedo Agregar: Fallido"+"\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if ( odontologo.isEmpty()){
+            throw new RequestException("400 Bad Request","Id: "+ id_odontologo + " no corresponde a ningun Odontologo");
         }
-        else {
-            var turno= turnoService.agregarDTO(turnoDto);
-            respuestaHttp = ResponseEntity.ok(turno);
+        else if ( paciente.isEmpty()){
+            throw new RequestException("400 Bad Request","Id: "+ id_paciente + " no corresponde a ningun Paciente");
         }
-
-        return respuestaHttp;
+        else if ( fecha != null){
+            turnoService.agregarDTO(turnoDto);
+            return new ResponseEntity<>("El Turno se guardo con exito", null, HttpStatus.CREATED);
+        }else{
+            throw new RequestException("400 Bad Request","Sintaxis Invalida");
+        }
     }
 
     @GetMapping("/listar")
@@ -56,81 +54,55 @@ public class TurnosController {
     @PutMapping("/modificar/{id}")
     public ResponseEntity<?> modificar(@RequestBody TurnoDto turnoDto, @PathVariable Long id){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
-
         var id_odontologo = turnoDto.getId_odontologo();
         var id_paciente = turnoDto.getId_paciente();
         var fecha = turnoDto.getFecha();
 
+        var odontologo = odontologoService.buscarPorId(id_odontologo);
+        var paciente = pacienteService.buscarPorId(id_paciente);
+
         if (turnoService.buscarPorId(id).isPresent()){
-
-            var oService = odontologoService.buscarPorId(id_odontologo);
-            var pService = pacienteService.buscarPorId(id_paciente);
-
-            if (id_odontologo == null & id_paciente == null & fecha == null )  {
-                respuesta = "\n"+"No se registran datos a Actualizar " + "\n" +
-                        "Update Fallido para Turno ID: " + id + "\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            if ( odontologo.isEmpty()){
+                throw new RequestException("400 Bad Request","Id: "+ id_odontologo + " no corresponde a ningun Odontologo");
             }
-
-            if(oService.isEmpty() | pService.isEmpty()) {
-                respuesta += "\n"+"Update: Fallido"+"\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-
+            if ( paciente.isEmpty()){
+                throw new RequestException("400 Bad Request","Id: "+ id_paciente + " no corresponde a ningun Paciente");
             }
-            else {
-                turnoService.modificar(turnoDto, id);
-                respuestaHttp = ResponseEntity.ok(turnoService.buscarPorId(id));
+            if ( fecha != null){
+                turnoService.modificar(turnoDto,id);
+                return new ResponseEntity<>("El Turno se actualizo con exito", null, HttpStatus.CREATED);
+            }else{
+                throw new RequestException("400 Bad Request","Sintaxis Invalida");
             }
-        }else {
-            respuesta = "\n"+"No existe Turno con ID: "+id;
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        }else  {
+            throw new RequestException("400 Bad Request","No existe Turno para el Id: "+id);
         }
-        return respuestaHttp;
     }
-
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id){
 
-        String respuesta = "";
-        ResponseEntity<String> respuestaHttp;
+        var getId = odontologoService.buscarPorId(id);
 
-        if (turnoService.buscarPorId(id).isEmpty()) {
-            respuesta +=  "\n"+"Id: {"+id+"} no corresponde a ningun Turno";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        }
-        else {
-            var paciente = turnoService.buscarPorId(id).get().getPaciente();
-            var odontologo = turnoService.buscarPorId(id).get().getOdontologo();
-            var fecha = turnoService.buscarPorId(id).get().getFecha();
+        if (getId.isEmpty()) {
+            throw new RequestException("400 Bad Request","No existe Turno para el Id: "+id);
+        } else {
             turnoService.eliminar(id);
-            respuesta = "\n"+"Se elimino correctamente Turno:"+ "\n"+
-                    "{" + "\n" +
-                    "Id: " + id + "," + "\n" +
-                    "Odontologo_Id : " +odontologo.getId() + "," + "\n" +
-                    "Paciente_Id : " + paciente.getId()+ "," + "\n" +
-                    "Fecha: " +fecha + "\n" +
-                    "}";
-            respuestaHttp = ResponseEntity.ok(respuesta);
+            return new ResponseEntity<>(("El Turno con Id: "+id+" se elimino con exito"), null, HttpStatus.CREATED);
         }
-        return respuestaHttp;
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
+        ResponseEntity<?> respuestaHttp = null;
+        var getId = turnoService.buscarPorId(id);
 
-        if (turnoService.buscarPorId(id).isEmpty()) {
-            respuesta += "\n"+"Id: {"+ id + "} no corresponde a ningun Turno";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getId.isEmpty()) {
+            throw new RequestException("400 Bad Request","Id: "+ id + " no corresponde a ningun Turno");
         }
         else {
-            turnoService.buscarPorId(id);
-            respuestaHttp = ResponseEntity.ok(turnoService.buscarPorId(id));
+            respuestaHttp = ResponseEntity.ok(getId);
         }
         return respuestaHttp;
     }
@@ -138,32 +110,29 @@ public class TurnosController {
     @GetMapping("/buscarOdontologo/{id}")
     public ResponseEntity<?> buscarOdontologo(@PathVariable Long id){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
+        ResponseEntity<?> respuestaHttp = null;
+        var getOdontologo = turnoService.buscarOdontologo(id);
 
-        if (turnoService.buscarOdontologo(id).isEmpty()){
-            respuesta += "\n"+"Id: {"+ id + "} Odontologo no tiene asignado ningun Turno";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getOdontologo.isEmpty()) {
+            throw new RequestException("400 Bad Request","El odontologo con Id: "+ id + " no tiene asignado ningun Turno");
         }
         else {
-            turnoService.buscarOdontologo(id);
-            respuestaHttp = ResponseEntity.ok(turnoService.buscarOdontologo(id));
+            respuestaHttp = ResponseEntity.ok(getOdontologo);
         }
         return respuestaHttp;
     }
 
     @GetMapping("/buscarPaciente/{id}")
     public ResponseEntity<?> buscarPaciente(@PathVariable Long id){
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
 
-        if (turnoService.buscarPaciente(id).isEmpty()){
-            respuesta += "\n"+"Id: {"+ id + "} Paciente no tiene asignado ningun Turno";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        ResponseEntity<?> respuestaHttp = null;
+        var getPaciente = turnoService.buscarPaciente(id);
+
+        if (getPaciente.isEmpty()) {
+            throw new RequestException("400 Bad Request","El paciente con Id: "+ id + " no tiene asignado ningun Turno");
         }
         else {
-            turnoService.buscarPaciente(id);
-            respuestaHttp = ResponseEntity.ok(turnoService.buscarPaciente(id));
+            respuestaHttp = ResponseEntity.ok(getPaciente);
         }
         return respuestaHttp;
     }
@@ -175,26 +144,12 @@ public class TurnosController {
         ResponseEntity<?> respuestaHttp;
 
         if (turnoService.buscarOdontologo(id).isEmpty()) {
-            respuesta +=  "\n"+"Id: {"+id+"} Odontologo no registra ningun Turno"+ "\n"+
-                    "Delete Fallido";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            throw new RequestException("400 Bad Request","El Odontologo con Id: "+ id + " no tiene asignado ningun Turno");
         }
         else {
-            respuesta = "Se elimino correctamente Turno:"+ "\n"+ "\n";
-            var turnos = turnoService.buscarOdontologo(id);
-            for (Turno t : turnos){
-                respuesta +=
-                        "{" + "\n" +
-                                "Id: " + t.getId() + "," + "\n" +
-                                "Odontologo: " +t.getOdontologo().getId()+ "," + "\n" +
-                                "Paciente: " + t.getPaciente().getId()+ "," + "\n" +
-                                "FechaAlta: " +t.getFecha() + "\n" +
-                                "}"+ "\n" +"\n" ;
-            }
             turnoService.deleteOdontologo(id);
-            respuestaHttp = ResponseEntity.ok(respuesta);
+            return new ResponseEntity<>(("Los turnos del odontologo con Id: "+id+" se eliminaron  con exito"), null, HttpStatus.CREATED);
         }
-        return respuestaHttp;
     }
 
     @DeleteMapping("/eliminarPaciente/{id}")
@@ -204,26 +159,12 @@ public class TurnosController {
         ResponseEntity<?> respuestaHttp;
 
         if (turnoService.buscarPaciente(id).isEmpty()) {
-            respuesta +=  "\n"+"Id: {"+id+"} Paciente no registra ningun Turno"+ "\n"+
-                            "Delete Fallido";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+            throw new RequestException("400 Bad Request","El Paciente con Id: "+ id + " no tiene asignado ningun Turno");
         }
         else {
-            respuesta = "Se elimino correctamente Turno:"+ "\n"+ "\n";
-            var turnos = turnoService.buscarPaciente(id);
-            for (Turno t : turnos){
-                respuesta +=
-                        "{" + "\n" +
-                        "Id: " + t.getId() + "," + "\n" +
-                        "Odontologo: " +t.getOdontologo().getId() + "," + "\n" +
-                        "Id_Paciente: " + t.getPaciente().getId()+ "," + "\n" +
-                        "FechaAlta: " +t.getFecha() + "\n" +
-                        "}"+ "\n" +"\n" ;
-            }
             turnoService.deletePaciente(id);
-            respuestaHttp = ResponseEntity.ok(respuesta);
+            return new ResponseEntity<>(("Los turnos del Paciente con Id: "+id+" se eliminaron  con exito"), null, HttpStatus.CREATED);
         }
-        return respuestaHttp;
     }
 
     @DeleteMapping("/eliminarRegistros")

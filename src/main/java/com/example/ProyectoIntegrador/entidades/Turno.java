@@ -3,15 +3,12 @@ package com.example.ProyectoIntegrador.entidades;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-
 @Entity
-
 @Table(name = "turnos")
 public class Turno {
 
@@ -21,13 +18,11 @@ public class Turno {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "Id_Odontologo")
-    @JsonManagedReference(value = "OdontologoRef")
     private Odontologo odontologo;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JsonManagedReference(value = "PacienteRef")
     @JoinColumn(name = "Id_Paciente")
     private Paciente paciente;
 
     @Column(name="Fecha")
-    private LocalDate fecha;
+    private LocalDateTime fecha;
 }

@@ -1,6 +1,7 @@
 package com.example.ProyectoIntegrador.controllers;
 
 import com.example.ProyectoIntegrador.entidades.Paciente;
+import com.example.ProyectoIntegrador.exception.RequestException;
 import com.example.ProyectoIntegrador.service.PacienteService;
 import com.example.ProyectoIntegrador.service.TurnoService;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/pacientes")
 public class PacienteController {
 
@@ -32,26 +34,15 @@ public class PacienteController {
 
         var getDni = pacienteService.buscarDNI(dni);
 
-        if(nombre == null) respuesta += "\n"+"Nombre: no puede ser nulo"+"\n";
-        if(apellido == null) respuesta += "\n"+"Apellido: no puede ser nulo"+"\n";
-        if(domicilio == null) respuesta += "\n"+"Domicilio: no puede ser nulo"+"\n";
-        if(dni == null) respuesta += "\n"+"DNI: no puede ser nulo"+"\n";
-        if(fechaAlta == null) respuesta += "\n"+"FechaAlta: no puede ser nulo"+"\n";
-        if (getDni != null) respuesta += "\n"+"DNI: {"+dni+"} ya existente" + "\n";
-        if(nombre == null | apellido == null | domicilio == null | dni == null | fechaAlta == null | getDni != null){
-            respuesta += "\n"+"Metedo Agregar: Fallido "+"\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getDni!= null){
+            throw new RequestException("400 Bad Request","Matricula ya existente");
         }
-        if(nombre == null & apellido == null & domicilio == null & dni == null & fechaAlta == null) {
-            respuesta = "\n"+"No se registran datos de Paciente para agregar"+"\n"+"\n"+
-                    "Metedo Agregar: Fallido "+"\n";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        }
-        else if(nombre != null & apellido != null & domicilio != null & dni != null & fechaAlta != null && getDni == null){
+        if (nombre != null & !nombre.equals("") & apellido != null & !apellido.equals("") & domicilio != null & !domicilio.equals("") & dni != 0  & fechaAlta !=null ){
             pacienteService.agregar(paciente);
-            respuestaHttp = ResponseEntity.ok(paciente);
+            return new ResponseEntity<>("El paciente se guardo con exito", null, HttpStatus.CREATED);
+        }else{
+            throw new RequestException("400 Bad Request","Sintaxis Invalida");
         }
-        return respuestaHttp ;
     }
 
 
@@ -73,92 +64,66 @@ public class PacienteController {
         var dni = paciente.getDni();
         var fechaAlta = paciente.getFechaAlta();
 
-        var getDni = pacienteService.buscarDNI(dni);
+        var getPacienteId = pacienteService.buscarPorId(id);
+        var getPacienteDni = pacienteService.buscarDNI(dni);
 
-        if (pacienteService.buscarPorId(id).isPresent()){
-            if (getDni != null) {
-                respuesta +="\n"+"DNI: {"+dni+"} ya existente" + "\n"+"\n"+
-                        "Update Fallido para Paciente ID: "+id+"\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+
+        if (getPacienteId.isPresent()) {
+            if (getPacienteDni != null){
+                throw new RequestException("400 Bad Request","DNI ya existente");
             }
-            if(apellido == null & nombre == null & domicilio== null & dni == null & fechaAlta == null ) {
-                respuesta +=  "\n"+"No se registran datos a Actualizar "+"\n"+"\n"+
-                        "Update Fallido para Paciente ID: "+id+"\n";
-                respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-            }else if(getDni == null){
-                pacienteService.modificar(paciente, id);
-                respuestaHttp = ResponseEntity.ok(pacienteService.buscarPorId(id));
+            if (nombre != null & !nombre.equals("") & apellido != null & !apellido.equals("") & domicilio != null & !domicilio.equals("") & dni != 0 & fechaAlta !=null ){
+                pacienteService.modificar(paciente,id);
+                return new ResponseEntity<>("El Paciente se Actualizo con exito", null, HttpStatus.CREATED);
+            }else{
+                throw new RequestException("400 Bad Request","Sintaxis Invalida");
             }
-        }else {
-            respuesta = "\n"+"No existe Paciente con ID: "+id;
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        } else {
+            throw new RequestException("400 Bad Request","No existe Paciente para el Id: "+id);
         }
-        return respuestaHttp;
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
+        var getId = pacienteService.buscarPorId(id);
 
-        if (pacienteService.buscarPorId(id).isEmpty()) {
-            respuesta = "\n"+"Id: {"+id+"} no corresponde a ningun Paciente"+"\n";
-            return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        } if (!turnoService.buscarPaciente(id).isEmpty()){
-            respuesta =  "\n"+"No es posible eliminar Paciente Id: {" + id + "} "+ "\n" +"\n"+
-                    "Ya que registra un Turno asignado";
-            return respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
-        }
-        else {
-            var nombre = pacienteService.buscarPorId(id).get().getNombre();
-            var apellido = pacienteService.buscarPorId(id).get().getApellido();
-            var domicilio = pacienteService.buscarPorId(id).get().getDomicilio();
-            var dni = pacienteService.buscarPorId(id).get().getDni();
-            var fechaAlta = pacienteService.buscarPorId(id).get().getFechaAlta();
+        if (getId.isEmpty()) {
+            throw new RequestException("400 Bad Request","No existe Paciente para el Id: "+id);
+        } if (!turnoService.buscarPaciente(id).isEmpty() ){
+            throw new RequestException("400 Bad Request",("No es posible eliminar Paciente Id: " + id + ", ya que registra un Turno asignado"));
+        } else {
             pacienteService.eliminar(id);
-            respuesta = "\n"+"Se elimino correctamente Paciente:"+ "\n"+
-                    "{" + "\n" +
-                    "Nombre: "+nombre+","+"\n"+
-                    "Apellido: "+apellido+","+"\n"+
-                    "Domicilio: "+domicilio+","+"\n"+
-                    "DNI: "+dni+","+","+"\n"+
-                    "FechaAlta: "+fechaAlta+"\n"+
-                    "}";
-            return respuestaHttp = ResponseEntity.ok(respuesta);
+            return new ResponseEntity<>(("El Paciente con Id: "+id+" se elimino con exito"), null, HttpStatus.CREATED);
         }
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
+        ResponseEntity<?> respuestaHttp = null;
+        var getId = pacienteService.buscarPorId(id);
 
-        if (pacienteService.buscarPorId(id).isEmpty()){
-            respuesta = "\n"+"Id: {"+ id + "} no corresponde a ningun Paciente";
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getId.isEmpty()) {
+            throw new RequestException("400 Bad Request","Id: {"+ id + "} no corresponde a ningun Paciente");
         }
         else {
-            pacienteService.buscarPorId(id);
-            respuestaHttp = ResponseEntity.ok(pacienteService.buscarPorId(id));
+            respuestaHttp = ResponseEntity.ok(getId);
         }
         return respuestaHttp;
     }
 
     @GetMapping("/buscarDni/{dni}")
-    public ResponseEntity<?> buscarDni(@PathVariable String dni){
+    public ResponseEntity<?> buscarDni(@PathVariable int dni){
 
-        String respuesta = "";
-        ResponseEntity<?> respuestaHttp;
+        ResponseEntity<?> respuestaHttp = null;
+        var getDni = pacienteService.buscarDNI(dni);
 
-        if (pacienteService.buscarDNI(dni) == null){
-            respuesta += "\n"+"No se existe ningun Paciente con D.N.I : "+ dni ;
-            respuestaHttp = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        if (getDni == null){
+            throw new RequestException("400 Bad Request","No existe ningun Odontologo con DNI : "+ dni );
         }
         else {
-            pacienteService.buscarDNI(dni);
-            respuestaHttp = ResponseEntity.ok(pacienteService.buscarDNI(dni));
+            respuestaHttp = ResponseEntity.ok(getDni);
         }
         return respuestaHttp;
     }

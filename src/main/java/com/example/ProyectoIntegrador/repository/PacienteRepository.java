@@ -14,7 +14,7 @@ import java.util.List;
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
     @Query("select o FROM Paciente o where o.dni= ?1")
-    public Paciente findByDni(String dni);
+    public Paciente findByDni(int dni);
 
     @Modifying
     @Transactional

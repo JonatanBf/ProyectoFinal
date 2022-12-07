@@ -2,17 +2,18 @@ package com.example.ProyectoIntegrador.service;
 
 import com.example.ProyectoIntegrador.entidades.Odontologo;
 import com.example.ProyectoIntegrador.repository.OdontologoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class OdontologoService {
 
-    @Autowired
-    OdontologoRepository odontologoRepository;
+
+    private final OdontologoRepository odontologoRepository;
 
 
     public void agregar(Odontologo o){
@@ -25,9 +26,9 @@ public class OdontologoService {
 
     public void modificar(Odontologo o, Long id) {
         var odontoNew = odontologoRepository.findById(id).get();
-        if(o.getNombre() != null) odontoNew.setNombre(o.getNombre());
-        if(o.getApellido() != null)odontoNew.setApellido(o.getApellido());
-        if(o.getMatricula() != null)odontoNew.setMatricula(o.getMatricula());
+        if(o.getNombre() != null & !o.getNombre().equals("")) odontoNew.setNombre(o.getNombre());
+        if(o.getApellido() != null & !o.getApellido().equals(""))odontoNew.setApellido(o.getApellido());
+        if(o.getMatricula() != null & !o.getMatricula().equals(""))odontoNew.setMatricula(o.getMatricula());
         odontologoRepository.save(odontoNew);
     }
 
