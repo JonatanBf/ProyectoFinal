@@ -14,8 +14,6 @@ import java.util.Optional;
 public class PacienteService {
 
     private final PacienteRepository pacienteRepository;
-
-
     public void agregar(Paciente p){
         pacienteRepository.save(p);
     }

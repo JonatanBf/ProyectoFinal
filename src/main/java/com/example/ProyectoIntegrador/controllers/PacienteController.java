@@ -35,7 +35,7 @@ public class PacienteController {
         var getDni = pacienteService.buscarDNI(dni);
 
         if (getDni!= null){
-            throw new RequestException("400 Bad Request","Matricula ya existente");
+            throw new RequestException("400 Bad Request","dni ya existente");
         }
         if (nombre != null & !nombre.equals("") & apellido != null & !apellido.equals("") & domicilio != null & !domicilio.equals("") & dni != 0  & fechaAlta !=null ){
             pacienteService.agregar(paciente);

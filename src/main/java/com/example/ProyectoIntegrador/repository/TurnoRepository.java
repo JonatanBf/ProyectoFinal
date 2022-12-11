@@ -18,7 +18,6 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
     @Query("select t from Turno t where t.paciente.id= ?1")
     public List<Turno>  findByPaciente(Long idPaciente);
 
-
     @Modifying
     @Transactional
     @Query("DELETE Turno t where t.odontologo.id = ?1")
