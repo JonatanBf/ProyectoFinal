@@ -17,8 +17,8 @@ import java.util.List;
 @RequestMapping("/odontologos")
 public class OdontologoController {
 
-    OdontologoService odontologoService;
-    TurnoService turnoService;
+    private final OdontologoService odontologoService;
+    private final TurnoService turnoService;
 
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Odontologo odontologo) {

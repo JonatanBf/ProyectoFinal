@@ -17,8 +17,8 @@ import java.util.List;
 @RequestMapping("/pacientes")
 public class PacienteController {
 
-    PacienteService pacienteService;
-    TurnoService turnoService;
+    private final PacienteService pacienteService;
+    private final TurnoService turnoService;
 
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Paciente paciente){

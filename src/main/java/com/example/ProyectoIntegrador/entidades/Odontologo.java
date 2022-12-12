@@ -1,6 +1,5 @@
 package com.example.ProyectoIntegrador.entidades;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -8,11 +7,12 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Getter
 @Setter
 @Entity
 @Table(name = "odontologo")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Odontologo  {
 
     @Id
@@ -28,5 +28,6 @@ public class Odontologo  {
     @OneToMany(mappedBy = "odontologo", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Turno> turnos = new HashSet<>();
+
 
 }

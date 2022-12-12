@@ -18,9 +18,9 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/turnos")
 public class TurnosController {
-    TurnoService turnoService;
-    PacienteService pacienteService;
-    OdontologoService odontologoService;
+    private final TurnoService turnoService;
+    private final PacienteService pacienteService;
+    private final OdontologoService odontologoService;
 
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody TurnoDto turnoDto){

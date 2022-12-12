@@ -3,8 +3,9 @@ package com.example.ProyectoIntegrador.controllers;
 import com.example.ProyectoIntegrador.dto.RolUsuarioDto;
 import com.example.ProyectoIntegrador.entidades.Usuario;
 import com.example.ProyectoIntegrador.exception.RequestException;
+import com.example.ProyectoIntegrador.service.RolService;
 import com.example.ProyectoIntegrador.service.UsuarioService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,30 +13,48 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-   UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
+
+    private RolService rolService;
 
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Usuario usuario) {
+        var email = usuario.getUserName();
+        var password = usuario.getPassword();
 
-
-
-
-            usuarioService.agregar(usuario);
-            return new ResponseEntity<>("El Usuario se guardo con exito", null, HttpStatus.CREATED);
+        var buscarEmail = usuarioService.buscarPorEmail(email);
+            if (buscarEmail!= null){
+                throw new RequestException("400 Bad Request","Email ya existente");
+            }
+            if (email != null & password != null & !email.equals("") & !password.equals("") ){
+                usuarioService.agregar(usuario);
+                return new ResponseEntity<>("El Usuario se guardo con exito", null, HttpStatus.CREATED);
+            }else{
+                throw new RequestException("400 Bad Request","Sintaxis Invalida");
+            }
 
     }
 
     @PostMapping("/agregarRol")
     public ResponseEntity<?> agregarRol(@RequestBody RolUsuarioDto formRol) {
-    usuarioService.agregarRol(formRol);
-    return new ResponseEntity<>("El Usuario se guardo con exito", null, HttpStatus.CREATED);
+        var email = formRol.getUserName();
+        var nameRol = formRol.getNombreRol();
+        var buscarRol = rolService.buscarPorNombre(nameRol);
+        var buscarEmail = usuarioService.buscarPorEmail(email);
+        if ( buscarEmail == null){
+            throw new RequestException("400 Bad Request","No existe Email: "+email);
+        }if (buscarRol == null){
+            throw new RequestException("400 Bad Request","No existe Rol: "+nameRol);
+        }else{
+            usuarioService.agregarRol(formRol);
+            return new ResponseEntity<>("El Rol se agrego con exito", null, HttpStatus.CREATED);
+        }
 
     }
-
 
     @GetMapping("/listar")
     public List<Usuario> listar(){
@@ -50,7 +69,6 @@ public class UsuarioController {
 
         var getId = usuarioService.buscarPorId(id);
         var buscarPorEmail = usuarioService.buscarPorEmail(email);
-
 
         if (getId.isPresent()) {
             if (buscarPorEmail!= null){

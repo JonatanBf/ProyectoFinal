@@ -17,7 +17,6 @@ public class TurnoService {
     private final PacienteService pacienteService;
     private final OdontologoService odontologoService;
 
-
     public List<Turno> listar() {
         return turnoRepository.findAll();
     }
@@ -69,7 +68,5 @@ public class TurnoService {
     public void borrarTodos(){
         turnoRepository.deleteAll();
     }
-
-
 
 }

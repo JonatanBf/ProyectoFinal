@@ -3,7 +3,6 @@ package com.example.ProyectoIntegrador.service;
 import com.example.ProyectoIntegrador.entidades.Paciente;
 import com.example.ProyectoIntegrador.repository.PacienteRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

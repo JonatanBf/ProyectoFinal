@@ -23,6 +23,4 @@ public class Usuario {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Rol> roles = new ArrayList<>();
 
-
-
 }

@@ -4,16 +4,15 @@ import com.example.ProyectoIntegrador.dto.RolUsuarioDto;
 import com.example.ProyectoIntegrador.entidades.Usuario;
 import com.example.ProyectoIntegrador.repository.RolRepository;
 import com.example.ProyectoIntegrador.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Transactional
 @Slf4j //Similar al Logger
 public class UsuarioService {
@@ -57,10 +56,8 @@ public class UsuarioService {
         if(u.getPassword() != null & !u.getPassword().equals("")) usuarioNew.setPassword(u.getPassword());
         usuarioRepository.save(usuarioNew);
     }
-
     public void borrarTodos(){
         usuarioRepository.deleteAll();
     }
-
 
 }

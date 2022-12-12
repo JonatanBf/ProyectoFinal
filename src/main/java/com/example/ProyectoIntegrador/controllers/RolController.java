@@ -4,6 +4,7 @@ package com.example.ProyectoIntegrador.controllers;
 import com.example.ProyectoIntegrador.entidades.Rol;
 import com.example.ProyectoIntegrador.exception.RequestException;
 import com.example.ProyectoIntegrador.service.RolService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("/roles")
 public class RolController {
 
-   RolService rolService;
+    private final RolService rolService;
 
     @PostMapping("/agregar")
     public ResponseEntity<?> agregar(@RequestBody Rol rol) {

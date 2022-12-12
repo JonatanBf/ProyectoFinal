@@ -11,15 +11,10 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class OdontologoService {
-
-
     private final OdontologoRepository odontologoRepository;
-
-
     public void agregar(Odontologo o){
         odontologoRepository.save(o);
     }
-
     public List<Odontologo> listar() {
         return (odontologoRepository.findAll());
     }
