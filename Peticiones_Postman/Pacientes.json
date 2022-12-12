@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "39c560a4-f6a2-459c-a8b6-3b37eb4ccd96",
+		"name": "Pacientes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23249516"
+	},
+	"item": [
+		{
+			"name": "Agregar",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"nombre\": \"ddsa\",\r\n        \"apellido\": \"dsad\",\r\n        \"domicilio\": \"Av Falsa 951\",\r\n        \"dni\": 567020,\r\n        \"fechaAlta\": \"2012-06-13\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pacientes/agregar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"agregar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/pacientes/listar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"listar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar/id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"nombre\": \"UpdateN\",\r\n        \"apellido\": \"UpdateA\",\r\n        \"domicilio\": \"UpdateD\",\r\n        \"dni\": 12345,\r\n        \"fechaAlta\": \"2013-06-13\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pacientes/modificar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"modificar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar/id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/pacientes/eliminar/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"eliminar",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarRegistros",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/pacientes/eliminarRegistros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"eliminarRegistros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/pacientes/buscar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"buscar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarDNI",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/pacientes/buscarDni/123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"buscarDni",
+						"123"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

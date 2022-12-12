@@ -1,0 +1,222 @@
+{
+	"info": {
+		"_postman_id": "895fe1cf-0caf-45f8-a9e5-b96e5c6e9d16",
+		"name": "Odontologos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23249516"
+	},
+	"item": [
+		{
+			"name": "Agregar",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"nombre\": \"dsds\",\r\n        \"apellido\": \"sas\",\r\n        \"matricula\": \"asCsDvcsaSA\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/odontologos/agregar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"agregar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjQ5MTU2MiwiaWF0IjoxNjcwNzg2NTI5fQ._syldPxbnwvbEorNguCF-SUsFruSwmws9AY59_1bIwY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/odontologos/listar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"listar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar/id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"nombre\": \"Pepito\",\r\n        \"apellido\": \"Bordon\",\r\n        \"matricula\": \"UpaSaDS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/odontologos/modificar/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"modificar",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar/id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjQ5OTUxOSwiaWF0IjoxNjcwNzk0NDg2fQ.GVzG57jBEp5xaw1rM6zHPl5wtT8dKzRe4WMeRkaZVdM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/odontologos/eliminar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"eliminar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarRegistros",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/odontologos/eliminarRegistros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"eliminarRegistros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscarid",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/odontologos/buscar/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"buscar",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarMatricula",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/odontologos/buscarMatricula/asCsDv",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odontologos",
+						"buscarMatricula",
+						"asCsDv"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,261 @@
+{
+	"info": {
+		"_postman_id": "3a17f784-706c-4b4d-b24e-71c9ca65e4d9",
+		"name": "Usuarios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23249516"
+	},
+	"item": [
+		{
+			"name": "Agregar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjUxMzMxMiwiaWF0IjoxNjcwODA4Mjc4fQ.blL5kXhy8qS444YPMfp2hiK_1s-DR4vYG7bbBeMwO1Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"userName\": \"back1234@gmail.com\",\r\n        \"password\": \"1234\"\r\n    }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios/agregar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"agregar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AgregarRol",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjUxMzMxMiwiaWF0IjoxNjcwODA4Mjc4fQ.blL5kXhy8qS444YPMfp2hiK_1s-DR4vYG7bbBeMwO1Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"userName\": \"back1234@gmail.com\",\r\n        \"nombreRol\": \"ROLE_USER\"\r\n    }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios/agregarRol",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"agregarRol"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjUxMzMxMiwiaWF0IjoxNjcwODA4Mjc4fQ.blL5kXhy8qS444YPMfp2hiK_1s-DR4vYG7bbBeMwO1Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/usuarios/listar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"listar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar/id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"email\": \"Update@gmail.com\",\r\n        \"password\": \"01fgb\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios/modificar/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"modificar",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar/id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjU1ODAzNiwiaWF0IjoxNjcwODUzMDAzfQ.rmbiHOUmAkxY0Na-pKr-rK9cspP-vdQudLBiJKT6-uA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/usuarios/eliminar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"eliminar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarRegistros",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/usuarios/eliminarRegistros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"eliminarRegistros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarId",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjU1ODAzNiwiaWF0IjoxNjcwODUzMDAzfQ.rmbiHOUmAkxY0Na-pKr-rK9cspP-vdQudLBiJKT6-uA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/usuarios/buscar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"buscar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarCorreo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjUxMzMxMiwiaWF0IjoxNjcwODA4Mjc4fQ.blL5kXhy8qS444YPMfp2hiK_1s-DR4vYG7bbBeMwO1Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/usuarios/buscarEmail/back@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"buscarEmail",
+						"back@gmail.com"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "cb8ee896-f3ff-4209-b578-fd24009d79c4",
+		"name": "Turnos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23249516"
+	},
+	"item": [
+		{
+			"name": "Agregar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjQ5OTUxOSwiaWF0IjoxNjcwNzk0NDg2fQ.GVzG57jBEp5xaw1rM6zHPl5wtT8dKzRe4WMeRkaZVdM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"id_paciente\": 1,\r\n        \"id_odontologo\": 100,\r\n        \"fecha\": \"2013-08-18T10:25:45\"\r\n    }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/turnos/agregar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"agregar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDaG9uaSIsImV4cCI6MTY3MjQ5OTUxOSwiaWF0IjoxNjcwNzk0NDg2fQ.GVzG57jBEp5xaw1rM6zHPl5wtT8dKzRe4WMeRkaZVdM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/listar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"listar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar/id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"id_paciente\": 2,\r\n        \"id_odontologo\": 2,\r\n        \"fecha\": \"2014-08-18T10:25:45\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/turnos/modificar/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"modificar",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar/id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/eliminar/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"eliminar",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarRegistros",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/eliminarRegistros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"eliminarRegistros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarPaciente",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/eliminarPaciente/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"eliminarPaciente",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarOdontologo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/eliminarOdontologo/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"eliminarOdontologo",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/buscar/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"buscar",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarOdontologo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/buscarOdontologo/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"buscarOdontologo",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuscarPaciente",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/turnos/buscarPaciente/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"turnos",
+						"buscarPaciente",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
